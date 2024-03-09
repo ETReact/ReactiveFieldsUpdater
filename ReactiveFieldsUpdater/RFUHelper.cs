@@ -93,7 +93,7 @@ namespace ReactiveFieldsUpdater
 
             AttributeMetadata currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            var attributes = currentField.GetType().GetProperties().Where(p => p.Name == "MaxLength").OrderBy(x => x.Name);
+            var attributes = currentField.GetType().GetProperties().OrderBy(x => x.Name);
 
             foreach (var attribute in attributes)
             {
@@ -136,7 +136,7 @@ namespace ReactiveFieldsUpdater
             EntityMetadata currentEntity = RetrieveEntitiyMetadata(entityName, service);
             AttributeMetadata currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            // -> updating the property of the current field with the new value
+            // -> updating the property of the current field with the new value (only works with INT)
 
             foreach (var attributeUp in myAttributesList)
             {
