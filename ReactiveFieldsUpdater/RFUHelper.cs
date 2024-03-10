@@ -19,7 +19,23 @@ namespace ReactiveFieldsUpdater
 {
     internal class RFUHelper
     {
-        private static List<FieldAttribute> myAttributesList = new List<FieldAttribute>();
+        private static List<FieldAttribute> myAttributesList;
+
+        private static List<string> CONFIG_PROPS = new List<string>()
+        {
+            "DisplayName",
+            "Description",
+            "IsRequired",
+            "Searchable",
+            "MaxLength",
+            "Format",
+            "MaxValue",
+            "MinValue",
+            "Audit",
+            "Column Security",
+            "Dashboard global filter",
+            "IsSortable"
+        };
 
         public static EntityMetadata[] RetrieveAllEntitiesMetadata(IOrganizationService service)
         {
@@ -93,12 +109,12 @@ namespace ReactiveFieldsUpdater
 
             AttributeMetadata currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            var attributes = currentField.GetType().GetProperties().OrderBy(x => x.Name);
+            var attributes = currentField.GetType().GetProperties().Where(p => CONFIG_PROPS.Contains(p.Name)).OrderBy(x => x.Name);
 
             foreach (var attribute in attributes)
             {
-                var attributeValue = attribute.GetValue(currentField)?.ToString();
-                if (!String.IsNullOrEmpty(attributeValue))
+                var attributeValue = attribute.GetValue(currentField);
+                if (attributeValue != null)
                 {
                     listFieldAttribute.Add(new FieldAttribute()
                     {
@@ -117,7 +133,7 @@ namespace ReactiveFieldsUpdater
 
             DataGridViewRow updatedDataRow = dataGridView.Rows[rowIndex];
             var updatedAttribute = updatedDataRow.Cells[0].Value?.ToString();
-            var updatedAttributeValue = updatedDataRow.Cells[1].Value?.ToString();
+            var updatedAttributeValue = updatedDataRow.Cells[1].Value;
 
             var newAttr = new FieldAttribute()
             {
@@ -136,14 +152,13 @@ namespace ReactiveFieldsUpdater
             EntityMetadata currentEntity = RetrieveEntitiyMetadata(entityName, service);
             AttributeMetadata currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            // -> updating the property of the current field with the new value (only works with INT)
-
+            // -> updating the property of the current field with the new value
             foreach (var attributeUp in myAttributesList)
             {
                 PropertyInfo propertyInfo = currentField.GetType().GetProperty(attributeUp.AttributeName);
                 Type nonNullableType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
 
-                propertyInfo.SetValue(currentField, Convert.ChangeType(Convert.ToInt32(attributeUp.AttributeValue), nonNullableType));
+                propertyInfo.SetValue(currentField, Convert.ChangeType(attributeUp.AttributeValue, nonNullableType));
 
                 UpdateAttributeRequest updReq = new UpdateAttributeRequest
                 {
@@ -196,7 +211,7 @@ namespace ReactiveFieldsUpdater
     class FieldAttribute
     {
         public string AttributeName { get; set; }
-        public string AttributeValue { get; set; }
+        public dynamic AttributeValue { get; set; }
 
     }
 }
