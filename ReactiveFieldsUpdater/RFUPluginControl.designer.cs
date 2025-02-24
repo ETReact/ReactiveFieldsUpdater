@@ -38,8 +38,6 @@ namespace ReactiveFieldsUpdater
             this.btnGetEntities = new System.Windows.Forms.Button();
             this.entitiesListView = new System.Windows.Forms.ListView();
             this.fieldsListView = new System.Windows.Forms.ListView();
-            this.entityDummyLabel = new System.Windows.Forms.Label();
-            this.fieldDummyLabel = new System.Windows.Forms.Label();
             this.btnUpdateMetadata = new System.Windows.Forms.Button();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.attributesGridView)).BeginInit();
@@ -124,24 +122,6 @@ namespace ReactiveFieldsUpdater
             this.fieldsListView.UseCompatibleStateImageBehavior = false;
             this.fieldsListView.SelectedIndexChanged += new System.EventHandler(this.fieldsListView_SelectedIndexChanged);
             // 
-            // entityDummyLabel
-            // 
-            this.entityDummyLabel.AutoSize = true;
-            this.entityDummyLabel.Location = new System.Drawing.Point(1336, 46);
-            this.entityDummyLabel.Name = "entityDummyLabel";
-            this.entityDummyLabel.Size = new System.Drawing.Size(0, 13);
-            this.entityDummyLabel.TabIndex = 99;
-            this.entityDummyLabel.Visible = false;
-            // 
-            // fieldDummyLabel
-            // 
-            this.fieldDummyLabel.AutoSize = true;
-            this.fieldDummyLabel.Location = new System.Drawing.Point(1336, 67);
-            this.fieldDummyLabel.Name = "fieldDummyLabel";
-            this.fieldDummyLabel.Size = new System.Drawing.Size(0, 13);
-            this.fieldDummyLabel.TabIndex = 99;
-            this.fieldDummyLabel.Visible = false;
-            // 
             // btnUpdateMetadata
             // 
             this.btnUpdateMetadata.Location = new System.Drawing.Point(28, 426);
@@ -157,8 +137,6 @@ namespace ReactiveFieldsUpdater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.fieldDummyLabel);
-            this.Controls.Add(this.entityDummyLabel);
             this.Controls.Add(this.entitiesListView);
             this.Controls.Add(this.fieldsListView);
             this.Controls.Add(this.btnGetEntities);
@@ -187,8 +165,6 @@ namespace ReactiveFieldsUpdater
         private Button btnGetEntities;
         private ListView entitiesListView;
         private ListView fieldsListView;
-        private Label entityDummyLabel;
-        private Label fieldDummyLabel;
         private Button btnUpdateMetadata;
     }
 }

@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Services.Description;
@@ -21,6 +22,9 @@ namespace ReactiveFieldsUpdater
     public partial class RFUPluginControl : PluginControlBase
     {
         private Settings mySettings;
+
+        private string _selectedEntity = string.Empty;
+        private string _selectedField = string.Empty;
 
         public RFUPluginControl()
         {
@@ -42,13 +46,6 @@ namespace ReactiveFieldsUpdater
             {
                 LogInfo("Settings found and loaded");
             }
-
-            entitiesListView.Columns.Add("Logical Name", 250, HorizontalAlignment.Left);
-            entitiesListView.Columns.Add("Schema Name", 250, HorizontalAlignment.Left);
-
-            fieldsListView.Columns.Add("Field Logical Name", 250, HorizontalAlignment.Left);
-            fieldsListView.Columns.Add("Field Schema Name", 250, HorizontalAlignment.Left);
-            fieldsListView.Columns.Add("Field Type", 250, HorizontalAlignment.Left);
         }
 
         /// <summary>
@@ -93,28 +90,20 @@ namespace ReactiveFieldsUpdater
 
         private void entitiesListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection selectedItems = entitiesListView.SelectedItems;
-            string value = String.Empty;
-            foreach (ListViewItem item in selectedItems)
-            {
-                value = item.Text;
-            }
-            entityDummyLabel.Text = value;
-            if (!String.IsNullOrEmpty(value))
-                ExecuteMethod(GetFields);
+            if (entitiesListView.SelectedItems.Count == 0)
+                return;
+
+            _selectedEntity = entitiesListView.SelectedItems[0].Text;
+            ExecuteMethod(() => GetFields(_selectedEntity));
         }
 
         private void fieldsListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection selectedItems = fieldsListView.SelectedItems;
-            string value = String.Empty;
-            foreach (ListViewItem item in selectedItems)
-            {
-                value = item.Text;
-            }
-            fieldDummyLabel.Text = value;
-            if (!String.IsNullOrEmpty(value))
-                ExecuteMethod(GetAttributes);
+            if (fieldsListView.SelectedItems.Count == 0)
+                return;
+
+            _selectedField = fieldsListView.SelectedItems[0].Text;
+            ExecuteMethod(() => GetAttributes(_selectedEntity, _selectedField));
         }
 
         private void GetEntities()
@@ -132,113 +121,88 @@ namespace ReactiveFieldsUpdater
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        try
-                        {
-                            entitiesListView.Items.Clear();
-                            RFUHelper.UpdateListView(entitiesListView, result);
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
+                        RFUHelper.UpdateEntityListView(entitiesListView, result);
                     }
                 }
             });
         }
 
-        private void GetFields()
+        private void GetFields(string selectedEntity)
         {
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting fields...",
                 Work = (worker, args) =>
                 {
-                    args.Result = RFUHelper.GetEntityFields(entityDummyLabel.Text, Service);
+                    args.Result = RFUHelper.GetEntityFields(selectedEntity, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        try
-                        {
-                            fieldsListView.Items.Clear();
-                            RFUHelper.UpdateListView(fieldsListView, result);
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
+                        RFUHelper.UpdateFieldListView(fieldsListView, result);
                     }
                 }
             });
         }
 
-        private void GetAttributes()
+        private void GetAttributes(string selectedEntity, string selectedField)
         {
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Getting attributes...",
                 Work = (worker, args) =>
                 {
-                    args.Result = RFUHelper.GetFieldAttributes(entityDummyLabel.Text, fieldDummyLabel.Text, Service);
+                    args.Result = RFUHelper.GetFieldAttributes(selectedEntity, selectedField, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
-                    var result = args.Result as List<object>;
-                    if (result != null)
+                    if (args.Result is List<FieldAttribute> result)
                     {
-                        try
+                        attributesGridView.BeginInvoke(new Action(() =>
                         {
                             RFUHelper.UpdateDataGridView(attributesGridView, result);
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
+                        }));
                     }
                 }
             });
         }
 
-        private void SetNewAttributeValue(object sender, EventArgs e)
+        private void SetNewAttributeValue(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
             WorkAsync(new WorkAsyncInfo
             {
                 Work = (worker, args) =>
                 {
-                    DataGridViewCellEventArgs handler = e as DataGridViewCellEventArgs;
-                    RFUHelper.SetNewAttributeValue(attributesGridView, handler, Service);
+                    RFUHelper.SetNewAttributeValue(attributesGridView, e.RowIndex, e.ColumnIndex, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
-                    try
-                    {
-                        attributesGridView.Refresh();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
                     }
                 }
             });
@@ -251,7 +215,7 @@ namespace ReactiveFieldsUpdater
                 Message = "Updating...",
                 Work = (worker, args) =>
                 {
-                    RFUHelper.UpdateMetadata(entityDummyLabel.Text, fieldDummyLabel.Text, Service);
+                    RFUHelper.UpdateMetadata(_selectedEntity, _selectedField, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -259,19 +223,8 @@ namespace ReactiveFieldsUpdater
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
-                    try
-                    {
-                        attributesGridView.Refresh();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
                 }
             });
         }
-
-
     }
 }

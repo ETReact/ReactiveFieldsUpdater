@@ -14,6 +14,8 @@ using System.Reflection;
 using System.Xml.Linq;
 using System.Drawing;
 using System.Data;
+using System.Configuration;
+using XrmToolBox.Extensibility;
 
 namespace ReactiveFieldsUpdater
 {
@@ -61,90 +63,142 @@ namespace ReactiveFieldsUpdater
 
         public static List<ListViewItem> GetMetadataLabels(EntityMetadata[] allMetadata)
         {
-            List<ListViewItem> listViewItems = new List<ListViewItem>();
-
-            foreach (EntityMetadata val in allMetadata)
-            {
-                if (val.DisplayName.UserLocalizedLabel != null)
-                {
-                    ListViewItem listViewItem = new ListViewItem
-                    {
-                        Text = val.LogicalName,
-                        Tag = (object)val
-                    };
-                    listViewItem.SubItems.Add(val.SchemaName);
-                    listViewItems.Add(listViewItem);
-                }
-            }
-
-            return listViewItems;
+            return allMetadata
+            .Where(val => val.DisplayName?.UserLocalizedLabel != null)
+            .Select(val => new ListViewItem(new[] { val.LogicalName, val.SchemaName }) { Tag = val })
+            .ToList();
         }
 
         public static List<ListViewItem> GetEntityFields(string entityName, IOrganizationService service)
         {
-            List<ListViewItem> listViewItems = new List<ListViewItem>();
+            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
 
-            EntityMetadata currentEntity = RetrieveEntitiyMetadata(entityName, service);
-
-            foreach (AttributeMetadata attribute in currentEntity.Attributes)
-            {
-                ListViewItem listViewItem = new ListViewItem
-                {
-                    Text = attribute.LogicalName,
-                    Tag = (object)attribute
-                };
-                listViewItem.SubItems.Add(attribute.SchemaName);
-                listViewItem.SubItems.Add(attribute.AttributeTypeName.Value.Replace("Type", ""));
-                listViewItems.Add(listViewItem);
-            }
-
-            return listViewItems;
-        }
-
-        public static List<object> GetFieldAttributes(string entityName, string fieldName, IOrganizationService service)
-        {
-            List<object> listFieldAttribute = new List<object>();
-
-            EntityMetadata currentEntity = RetrieveEntitiyMetadata(entityName, service);
-
-            AttributeMetadata currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
-
-            var attributes = currentField.GetType().GetProperties().Where(p => CONFIG_PROPS.Contains(p.Name)).OrderBy(x => x.Name);
-
-            foreach (var attribute in attributes)
-            {
-                var attributeValue = attribute.GetValue(currentField);
-                if (attributeValue != null)
-                {
-                    listFieldAttribute.Add(new FieldAttribute()
+            return currentEntity.Attributes
+                .Select(attribute => new ListViewItem(new[]
                     {
-                        AttributeName = attribute.Name,
-                        AttributeValue = attributeValue
-                    });
-                }
-            }
-
-            return listFieldAttribute;
+                        attribute.LogicalName,
+                        attribute.SchemaName,
+                        attribute.AttributeTypeName?.Value.Replace("Type", "") ?? "Unknown"
+                    }
+                )
+                { Tag = attribute }
+                ).ToList();
         }
 
-        public static void SetNewAttributeValue(DataGridView dataGridView, DataGridViewCellEventArgs e, IOrganizationService service)
+        public static List<FieldAttribute> GetFieldAttributes(string entityName, string fieldName, IOrganizationService service)
         {
-            var rowIndex = e.RowIndex;
+            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
+            var currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            DataGridViewRow updatedDataRow = dataGridView.Rows[rowIndex];
+            if (currentField == null)
+                return new List<FieldAttribute>();
+
+            return currentField.GetType()
+                .GetProperties()
+                .Where(p => CONFIG_PROPS.Contains(p.Name))
+                .OrderBy(p => p.Name)
+                .Select(p => new FieldAttribute
+                {
+                    AttributeName = p.Name,
+                    AttributeValue = p.GetValue(currentField) ?? "N/A"
+                })
+                .ToList();
+        }
+
+        public static void UpdateEntityListView(ListView listView, List<ListViewItem> listViewItems)
+        {
+            listView.BeginUpdate();
+            listView.Items.Clear();
+
+            if (listView.Columns.Count == 0)
+            {
+                listView.View = View.Details;
+                listView.LabelEdit = false;
+                listView.AllowColumnReorder = true;
+                listView.CheckBoxes = false;
+                listView.FullRowSelect = true;
+                listView.GridLines = true;
+                listView.Sorting = SortOrder.Ascending;
+            }
+
+            listView.Columns.Add("Logical Name", 250, HorizontalAlignment.Left);
+            listView.Columns.Add("Schema Name", 250, HorizontalAlignment.Left);
+
+            //Add the items to the ListView.
+            listView.Items.AddRange(listViewItems.ToArray());
+            listView.EndUpdate();
+        }
+
+        public static void UpdateFieldListView(ListView listView, List<ListViewItem> listViewItems)
+        {
+            listView.BeginUpdate();
+            listView.Items.Clear();
+
+            if (listView.Columns.Count == 0)
+            {
+                listView.View = View.Details;
+                listView.LabelEdit = false;
+                listView.AllowColumnReorder = true;
+                listView.CheckBoxes = false;
+                listView.FullRowSelect = true;
+                listView.GridLines = true;
+                listView.Sorting = SortOrder.Ascending;
+            }
+
+            listView.Columns.Add("Field Logical Name", 250, HorizontalAlignment.Left);
+            listView.Columns.Add("Field Schema Name", 250, HorizontalAlignment.Left);
+            listView.Columns.Add("Field Type", 250, HorizontalAlignment.Left);
+
+            //Add the items to the ListView.
+            listView.Items.AddRange(listViewItems.ToArray());
+            listView.EndUpdate();
+        }
+
+        public static void UpdateDataGridView<T>(DataGridView dataGridView, List<T> rows)
+        {
+            if (dataGridView.InvokeRequired)
+            {
+                dataGridView.BeginInvoke(new Action(() => UpdateDataGridView(dataGridView, rows)));
+                return;
+            }
+
+            var binding = new BindingSource { DataSource = rows };
+            dataGridView.DataSource = binding;
+
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
+        }
+
+        /* ------------------------------------------------------------------------------------
+           UPDATE DATA */
+
+        public static void SetNewAttributeValue(DataGridView dataGridView, int rowIndex, int columnIndex, IOrganizationService service)
+        {
+            var updatedDataRow = dataGridView.Rows[rowIndex];
             var updatedAttribute = updatedDataRow.Cells[0].Value?.ToString();
             var updatedAttributeValue = updatedDataRow.Cells[1].Value;
 
-            var newAttr = new FieldAttribute()
-            {
-                AttributeName = updatedAttribute,
-                AttributeValue = updatedAttributeValue
-            };
+            if (string.IsNullOrEmpty(updatedAttribute))
+                return;
 
-            myAttributesList.Add(newAttr);
+            var existingAttr = myAttributesList.FirstOrDefault(a => a.AttributeName == updatedAttribute);
+            if (existingAttr != null)
+            {
+                existingAttr.AttributeValue = updatedAttributeValue;
+            }
+            else
+            {
+                myAttributesList.Add(new FieldAttribute()
+                {
+                    AttributeName = updatedAttribute,
+                    AttributeValue = updatedAttributeValue
+                });
+            }
         }
 
-        public static void UpdateMetadata(string entityName, string fieldName, IOrganizationService service)
+        public static void UpdateMetadata_OLD(string entityName, string fieldName, IOrganizationService service)
         {
             if (String.IsNullOrEmpty(entityName) || String.IsNullOrEmpty(fieldName))
                 return;
@@ -170,40 +224,48 @@ namespace ReactiveFieldsUpdater
             }
         }
 
-        public static void UpdateListView(ListView listView, List<ListViewItem> listViewItems)
+        public static void UpdateMetadata(string entityName, string fieldName, IOrganizationService service)
         {
-            // Set the view to show details.
-            listView.View = View.Details;
-            // Allow the user to edit item text.
-            listView.LabelEdit = false;
-            // Allow the user to rearrange columns.
-            listView.AllowColumnReorder = true;
-            // Display check boxes.
-            listView.CheckBoxes = false;
-            // Select the item and subitems when selection is made.
-            listView.FullRowSelect = true;
-            // Display grid lines.
-            listView.GridLines = true;
-            // Sort the items in the list in ascending order.
-            listView.Sorting = SortOrder.Ascending;
+            if (string.IsNullOrEmpty(entityName) || string.IsNullOrEmpty(fieldName))
+                return;
 
+            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
+            var currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
-            //Add the items to the ListView.
-            listView.Items.AddRange(listViewItems.ToArray());
-        }
+            if (currentField == null)
+                return;
 
-        public static void UpdateDataGridView(DataGridView dataGridView, List<object> rows)
-        {
-            //use binding source to hold dummy data
-            BindingSource binding = new BindingSource();
-            binding.DataSource = rows;
-
-            //bind datagridview to binding source
-            dataGridView.DataSource = binding;
-
-            foreach (DataGridViewColumn column in dataGridView.Columns)
+            foreach (var attributeUp in myAttributesList)
             {
-                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                PropertyInfo propertyInfo = currentField.GetType().GetProperty(attributeUp.AttributeName);
+                if (propertyInfo == null)
+                    continue; // Evita errori se la proprietà non esiste
+
+                // Determina il tipo corretto per il cast
+                Type targetType = propertyInfo.PropertyType;
+                if (Nullable.GetUnderlyingType(targetType) != null)
+                    targetType = Nullable.GetUnderlyingType(targetType); // Ottiene il tipo non nullable
+
+                object convertedValue;
+                try
+                {
+                    convertedValue = Convert.ChangeType(attributeUp.AttributeValue, targetType);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Errore nella conversione del valore: {ex.Message}", "Conversion Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue; // Salta l'attributo con errore
+                }
+
+                propertyInfo.SetValue(currentField, convertedValue);
+
+                var updateRequest = new UpdateAttributeRequest
+                {
+                    Attribute = currentField,
+                    EntityName = entityName,
+                    MergeLabels = true
+                };
+                service.Execute(updateRequest);
             }
         }
     }
