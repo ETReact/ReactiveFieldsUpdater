@@ -1,19 +1,8 @@
 ﻿using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Services.Description;
-using System.Windows.Documents;
+
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 
@@ -33,7 +22,7 @@ namespace ReactiveFieldsUpdater
 
         private void MyPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("Learn more --->", new Uri("https://www.activadigital.it/"));
+            //ShowInfoNotification("Learn more --->", new Uri("https://www.activadigital.it/"));
 
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
@@ -88,6 +77,11 @@ namespace ReactiveFieldsUpdater
             ExecuteMethod(UpdateMetadata);
         }
 
+        private void btnClearOperations_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(ClearOperations);
+        }
+
         private void entitiesListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (entitiesListView.SelectedItems.Count == 0)
@@ -127,7 +121,12 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        RFUHelper.UpdateEntityListView(entitiesListView, result);
+                        RFUHelper.UpdateListView(entitiesListView, result, 1);
+
+                        RFUHelper.UpdateListView(fieldsListView, null, 2);
+
+                        attributesGridView.Rows.Clear();
+                        attributesGridView.DataSource = null;
                     }
                 }
             });
@@ -153,7 +152,10 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        RFUHelper.UpdateFieldListView(fieldsListView, result);
+                        RFUHelper.UpdateListView(fieldsListView, result, 2);
+
+                        attributesGridView.Rows.Clear();
+                        attributesGridView.DataSource = null;
                     }
                 }
             });
@@ -176,7 +178,7 @@ namespace ReactiveFieldsUpdater
                         return;
                     }
 
-                    if (args.Result is List<FieldAttribute> result)
+                    if (args.Result is List<AttributesListItem> result)
                     {
                         attributesGridView.BeginInvoke(new Action(() =>
                         {
@@ -187,7 +189,7 @@ namespace ReactiveFieldsUpdater
             });
         }
 
-        private void SetNewAttributeValue(object sender, DataGridViewCellEventArgs e)
+        private void SetNewOperation(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
@@ -196,13 +198,19 @@ namespace ReactiveFieldsUpdater
             {
                 Work = (worker, args) =>
                 {
-                    RFUHelper.SetNewAttributeValue(attributesGridView, e.RowIndex, e.ColumnIndex, Service);
+                    args.Result = RFUHelper.SetNewOperation(attributesGridView, _selectedEntity, _selectedField, e.RowIndex, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    var result = args.Result as List<ListViewItem>;
+                    if (result != null)
+                    {
+                        RFUHelper.UpdateListView(operationsListView, result, 3);
                     }
                 }
             });
@@ -215,13 +223,47 @@ namespace ReactiveFieldsUpdater
                 Message = "Updating...",
                 Work = (worker, args) =>
                 {
-                    RFUHelper.UpdateMetadata(_selectedEntity, _selectedField, Service);
+                    args.Result = RFUHelper.UpdateMetadata(_selectedEntity, _selectedField, Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    var result = args.Result as bool?;
+                    if (result == true)
+                    {
+                        RFUHelper.UpdateListView(operationsListView, null, 3);
+                    }
+                }
+            });
+        }
+
+        private void ClearOperations()
+        {
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Clearing Operations...",
+                Work = (worker, args) =>
+                {
+                    args.Result = RFUHelper.ClearOperations();
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    var result = args.Result as bool?;
+                    if (result == true)
+                    {
+                        RFUHelper.UpdateListView(operationsListView, null, 3);
+
+                        attributesGridView.Rows.Clear();
+                        attributesGridView.DataSource = null;
                     }
                 }
             });
