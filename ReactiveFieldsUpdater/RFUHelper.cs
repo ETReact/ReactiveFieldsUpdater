@@ -14,13 +14,6 @@ namespace ReactiveFieldsUpdater
     {
         private static List<Operation> operationsList = new List<Operation>();
 
-        private static readonly List<string> CONFIG_PROPS = new List<string>()
-        {
-            "MaxLength",
-            "MaxValue",
-            "MinValue"
-        };
-
 
         /*---------------------------------------------------------------------------------   GET METHODS   */
         public static EntityMetadata[] RetrieveAllEntitiesMetadata(IOrganizationService service)
@@ -83,7 +76,7 @@ namespace ReactiveFieldsUpdater
 
             return currentField.GetType()
                 .GetProperties()
-                .Where(p => CONFIG_PROPS.Contains(p.Name))
+                .Where(p => RFUPluginControl.mySettings.Config_Props.Contains(p.Name))
                 .OrderBy(p => p.Name)
                 .Select(p => new AttributesListItem
                 {
@@ -95,7 +88,8 @@ namespace ReactiveFieldsUpdater
 
 
         /*---------------------------------------------------------------------------------   HANDLE VIEWS   */
-        public static void UpdateListView(ListView listView, List<ListViewItem> listViewItems, int box)
+
+        public static void UpdateListView(ListView listView, List<ListViewItem> listViewItems)
         {
             listView.BeginUpdate();
             listView.Items.Clear();
@@ -111,31 +105,8 @@ namespace ReactiveFieldsUpdater
                 listView.Sorting = SortOrder.Ascending;
             }
 
-            switch (box)
-            {
-                case 1:
-                    if (listView.Columns.Count == 0)
-                        listView.Columns.Add("Logical Name", 460, HorizontalAlignment.Left);
-                    break;
-                case 2:
-                    if (listView.Columns.Count == 0)
-                    {
-                        listView.Columns.Add("Field Logical Name", 230, HorizontalAlignment.Left);
-                        listView.Columns.Add("Field Type", 230, HorizontalAlignment.Left);
-                    }
-                    break;
-                case 3:
-                    if (listView.Columns.Count == 0)
-                    {
-                        listView.Columns.Add("Entity", 180, HorizontalAlignment.Left);
-                        listView.Columns.Add("Field", 180, HorizontalAlignment.Left);
-                        listView.Columns.Add("Attribute", 180, HorizontalAlignment.Left);
-                        listView.Columns.Add("Value", 180, HorizontalAlignment.Left);
-                    }
-                    break;
-                default:
-                    break;
-            }
+            if (listView.Columns.Count == 0)
+                listView = AddListViewColumns(listView);
 
             if (listViewItems != null)
                 listView.Items.AddRange(listViewItems.ToArray());
@@ -143,6 +114,32 @@ namespace ReactiveFieldsUpdater
             listView.EndUpdate();
         }
 
+        public static ListView AddListViewColumns(ListView listView)
+        {
+            switch (listView?.Name)
+            {
+                case "entitiesListView":
+                    listView.Columns.Add("Logical Name", 500, HorizontalAlignment.Left);
+                    break;
+                case "fieldsListView":
+                    listView.Columns.Add("Field Logical Name", 250, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Type", 250, HorizontalAlignment.Left);
+                    break;
+                case "operationsListView":
+                    listView.Columns.Add("Entity", 200, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field", 200, HorizontalAlignment.Left);
+                    listView.Columns.Add("Attribute", 200, HorizontalAlignment.Left);
+                    listView.Columns.Add("Value", 200, HorizontalAlignment.Left);
+
+                    listView.CheckBoxes = true;
+
+                    break;
+                default:
+                    break;
+            }
+
+            return listView;
+        }
 
         public static void UpdateDataGridView<T>(DataGridView dataGridView, List<T> rows)
         {

@@ -10,7 +10,7 @@ namespace ReactiveFieldsUpdater
 {
     public partial class RFUPluginControl : PluginControlBase
     {
-        private Settings mySettings;
+        public static Settings mySettings;
 
         private string _selectedEntity = string.Empty;
         private string _selectedField = string.Empty;
@@ -22,8 +22,6 @@ namespace ReactiveFieldsUpdater
 
         private void MyPluginControl_Load(object sender, EventArgs e)
         {
-            //ShowInfoNotification("Learn more --->", new Uri("https://www.activadigital.it/"));
-
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
             {
@@ -35,6 +33,12 @@ namespace ReactiveFieldsUpdater
             {
                 LogInfo("Settings found and loaded");
             }
+
+            ShowInfoNotification("Learn more --->", new Uri(mySettings.CustomUrl));
+
+            RFUHelper.UpdateListView(entitiesListView, null);
+            RFUHelper.UpdateListView(fieldsListView, null);
+            RFUHelper.UpdateListView(operationsListView, null);
         }
 
         /// <summary>
@@ -121,9 +125,9 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        RFUHelper.UpdateListView(entitiesListView, result, 1);
+                        RFUHelper.UpdateListView(entitiesListView, result);
 
-                        RFUHelper.UpdateListView(fieldsListView, null, 2);
+                        RFUHelper.UpdateListView(fieldsListView, null);
 
                         attributesGridView.Rows.Clear();
                         attributesGridView.DataSource = null;
@@ -152,7 +156,7 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        RFUHelper.UpdateListView(fieldsListView, result, 2);
+                        RFUHelper.UpdateListView(fieldsListView, result);
 
                         attributesGridView.Rows.Clear();
                         attributesGridView.DataSource = null;
@@ -210,7 +214,7 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as List<ListViewItem>;
                     if (result != null)
                     {
-                        RFUHelper.UpdateListView(operationsListView, result, 3);
+                        RFUHelper.UpdateListView(operationsListView, result);
                     }
                 }
             });
@@ -235,7 +239,7 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as bool?;
                     if (result == true)
                     {
-                        RFUHelper.UpdateListView(operationsListView, null, 3);
+                        RFUHelper.UpdateListView(operationsListView, null);
                     }
                 }
             });
@@ -260,7 +264,7 @@ namespace ReactiveFieldsUpdater
                     var result = args.Result as bool?;
                     if (result == true)
                     {
-                        RFUHelper.UpdateListView(operationsListView, null, 3);
+                        RFUHelper.UpdateListView(operationsListView, null);
 
                         attributesGridView.Rows.Clear();
                         attributesGridView.DataSource = null;

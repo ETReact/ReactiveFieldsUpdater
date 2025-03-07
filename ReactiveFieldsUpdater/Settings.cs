@@ -15,5 +15,13 @@ namespace ReactiveFieldsUpdater
     public class Settings
     {
         public string LastUsedOrganizationWebappUrl { get; set; }
+        public string CustomUrl { get; set; } = "https://www.activadigital.it/";
+
+        public string[] Config_Props { get; set; } = new string[]
+        {
+            "MaxLength",
+            "MaxValue",
+            "MinValue"
+        };
     }
 }
