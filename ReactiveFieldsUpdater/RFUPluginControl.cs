@@ -104,6 +104,17 @@ namespace ReactiveFieldsUpdater
             ExecuteMethod(() => GetAttributes(_selectedEntity, _selectedField));
         }
 
+        private void operationsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            var operation = e.Item.Tag as Operation;
+            if (operation != null)
+                ExecuteMethod(() => HandleCheckedItem(operation.Id, e.Item.Checked));
+        }
+
+
+        // ------------------------------------------------------------------------------------------ //
+
+
         private void GetEntities()
         {
             WorkAsync(new WorkAsyncInfo
@@ -220,6 +231,24 @@ namespace ReactiveFieldsUpdater
             });
         }
 
+        private void HandleCheckedItem(Guid operationId, bool isChecked)
+        {
+            WorkAsync(new WorkAsyncInfo
+            {
+                Work = (worker, args) =>
+                {
+                    RFUHelper.HandleCheckedItem(operationId, isChecked);
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            });
+        }
+
         private void UpdateMetadata()
         {
             WorkAsync(new WorkAsyncInfo
@@ -227,7 +256,7 @@ namespace ReactiveFieldsUpdater
                 Message = "Updating...",
                 Work = (worker, args) =>
                 {
-                    args.Result = RFUHelper.UpdateMetadata(_selectedEntity, _selectedField, Service);
+                    RFUHelper.UpdateMetadata(Service);
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -236,11 +265,7 @@ namespace ReactiveFieldsUpdater
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    var result = args.Result as bool?;
-                    if (result == true)
-                    {
-                        RFUHelper.UpdateListView(operationsListView, null);
-                    }
+                    ExecuteMethod(ClearOperations); //VERIFICARE
                 }
             });
         }
@@ -261,10 +286,10 @@ namespace ReactiveFieldsUpdater
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    var result = args.Result as bool?;
-                    if (result == true)
+                    var result = args.Result as List<ListViewItem>;
+                    if (result != null)
                     {
-                        RFUHelper.UpdateListView(operationsListView, null);
+                        RFUHelper.UpdateListView(operationsListView, result);
 
                         attributesGridView.Rows.Clear();
                         attributesGridView.DataSource = null;

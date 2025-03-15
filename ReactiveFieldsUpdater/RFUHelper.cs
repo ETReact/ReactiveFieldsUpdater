@@ -126,13 +126,12 @@ namespace ReactiveFieldsUpdater
                     listView.Columns.Add("Field Type", 250, HorizontalAlignment.Left);
                     break;
                 case "operationsListView":
+                    listView.CheckBoxes = true;
+                    listView.Columns.Add("", 50, HorizontalAlignment.Center);
                     listView.Columns.Add("Entity", 200, HorizontalAlignment.Left);
                     listView.Columns.Add("Field", 200, HorizontalAlignment.Left);
                     listView.Columns.Add("Attribute", 200, HorizontalAlignment.Left);
                     listView.Columns.Add("Value", 200, HorizontalAlignment.Left);
-
-                    listView.CheckBoxes = true;
-
                     break;
                 default:
                     break;
@@ -183,6 +182,8 @@ namespace ReactiveFieldsUpdater
             {
                 operationsList.Add(new Operation()
                 {
+                    Id = Guid.NewGuid(),
+                    Checked = false,
                     EntityName = entityName,
                     EntityField = fieldName,
                     AttributeName = updatedAttribute,
@@ -191,35 +192,36 @@ namespace ReactiveFieldsUpdater
             }
 
             // returns all the operations as a ListViewItem List<>
-            return operationsList
-                .Select(operation => new ListViewItem(new[]
-                    {
-                        operation.EntityName,
-                        operation.EntityField,
-                        operation.AttributeName,
-                        (string)operation.AttributeValue
-                    }
-                )
-                { Tag = operation }
-                ).ToList();
+            return GetItemsFromOperations();
         }
 
+        public static void HandleCheckedItem(Guid operationId, bool value)
+        {
+            var existingOperation = operationsList.FirstOrDefault(a => a.Id == operationId);
+            if (existingOperation != null)
+            {
+                existingOperation.Checked = value;
+            }
+        }
 
         /*---------------------------------------------------------------------------------   UPDATE METADATA   */
-        public static bool UpdateMetadata(string entityName, string fieldName, IOrganizationService service)
+        public static void UpdateMetadata(IOrganizationService service)
         {
-            if (string.IsNullOrEmpty(entityName) || string.IsNullOrEmpty(fieldName))
-                return false;
-
-            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
-            var currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
-
-            if (currentField == null)
-                return false;
-
-            foreach (var attributeUp in operationsList)
+            foreach (var operation in operationsList)
             {
-                PropertyInfo propertyInfo = currentField.GetType().GetProperty(attributeUp.AttributeName);
+                if (!operation.Checked)
+                    continue;
+
+                if (string.IsNullOrEmpty(operation.EntityName) || string.IsNullOrEmpty(operation.EntityField))
+                    continue;
+
+                var currentEntityMetadata = RetrieveEntitiyMetadata(operation.EntityName, service);
+                var currentField = currentEntityMetadata.Attributes.FirstOrDefault(p => p.LogicalName == operation.EntityField);
+
+                if (currentField == null)
+                    continue;
+
+                PropertyInfo propertyInfo = currentField.GetType().GetProperty(operation.AttributeName);
                 if (propertyInfo == null)
                     continue;
 
@@ -230,7 +232,7 @@ namespace ReactiveFieldsUpdater
                 object convertedValue;
                 try
                 {
-                    convertedValue = Convert.ChangeType(attributeUp.AttributeValue, targetType);
+                    convertedValue = Convert.ChangeType(operation.AttributeValue, targetType);
                 }
                 catch (Exception ex)
                 {
@@ -240,24 +242,50 @@ namespace ReactiveFieldsUpdater
 
                 propertyInfo.SetValue(currentField, convertedValue);
 
-                var updateRequest = new UpdateAttributeRequest
+                try
                 {
-                    Attribute = currentField,
-                    EntityName = entityName,
-                    MergeLabels = true
-                };
-                service.Execute(updateRequest);
-
+                    var updateRequest = new UpdateAttributeRequest
+                    {
+                        Attribute = currentField,
+                        EntityName = operation.EntityName,
+                        MergeLabels = true
+                    };
+                    service.Execute(updateRequest);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Updating Error for value: {ex.Message}", "Updating Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
             }
-
-            return ClearOperations();
         }
 
-        public static bool ClearOperations()
+        public static List<ListViewItem> ClearOperations()
         {
-            operationsList.Clear();
-            return true;
+            operationsList.RemoveAll(c => c.Checked);
+
+            // returns all the operations as a ListViewItem List<>
+            return GetItemsFromOperations();
         }
+
+
+
+        public static List<ListViewItem> GetItemsFromOperations()
+        {
+            return operationsList
+                .Select(operation => new ListViewItem(new[]
+                    {
+                        String.Empty,
+                        operation.EntityName,
+                        operation.EntityField,
+                        operation.AttributeName,
+                        (string)operation.AttributeValue
+                    }
+                )
+                { Tag = operation }
+                ).ToList();
+        }
+
 
     }
 
@@ -270,6 +298,8 @@ namespace ReactiveFieldsUpdater
 
     class Operation
     {
+        public Guid Id { get; set; }
+        public bool Checked { get; set; }
         public string EntityName { get; set; }
         public string EntityField { get; set; }
         public string AttributeName { get; set; }

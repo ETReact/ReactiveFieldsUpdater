@@ -123,6 +123,7 @@ namespace ReactiveFieldsUpdater
             this.operationsListView.Size = new System.Drawing.Size(1140, 243);
             this.operationsListView.TabIndex = 3;
             this.operationsListView.UseCompatibleStateImageBehavior = false;
+            this.operationsListView.ItemChecked += new ItemCheckedEventHandler(this.operationsListView_ItemChecked);
             // 
             // lblEntities
             // 
