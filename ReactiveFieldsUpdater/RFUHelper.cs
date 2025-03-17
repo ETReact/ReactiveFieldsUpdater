@@ -116,22 +116,25 @@ namespace ReactiveFieldsUpdater
 
         public static ListView AddListViewColumns(ListView listView)
         {
+            var availableWidth = listView.ClientSize.Width;
+
             switch (listView?.Name)
             {
+
                 case "entitiesListView":
-                    listView.Columns.Add("Logical Name", 500, HorizontalAlignment.Left);
+                    listView.Columns.Add("Logical Name", availableWidth, HorizontalAlignment.Left);
                     break;
                 case "fieldsListView":
-                    listView.Columns.Add("Field Logical Name", 250, HorizontalAlignment.Left);
-                    listView.Columns.Add("Field Type", 250, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Logical Name", availableWidth / 2, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Type", availableWidth / 2, HorizontalAlignment.Left);
                     break;
                 case "operationsListView":
                     listView.CheckBoxes = true;
                     listView.Columns.Add("", 50, HorizontalAlignment.Center);
-                    listView.Columns.Add("Entity", 200, HorizontalAlignment.Left);
-                    listView.Columns.Add("Field", 200, HorizontalAlignment.Left);
-                    listView.Columns.Add("Attribute", 200, HorizontalAlignment.Left);
-                    listView.Columns.Add("Value", 200, HorizontalAlignment.Left);
+                    listView.Columns.Add("Entity", (availableWidth - 50) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field", (availableWidth - 50) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Attribute", (availableWidth - 50) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Value", (availableWidth - 50) / 4, HorizontalAlignment.Left);
                     break;
                 default:
                     break;
@@ -283,7 +286,11 @@ namespace ReactiveFieldsUpdater
                     }
                 )
                 { Tag = operation }
-                ).ToList();
+                )
+                .Select((item, index) => new { item, index })
+                .OrderByDescending(x => x.index)
+                .Select(x => x.item)
+                .ToList();
         }
 
 

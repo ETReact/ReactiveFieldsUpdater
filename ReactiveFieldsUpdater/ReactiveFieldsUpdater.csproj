@@ -206,6 +206,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RFUPlugin.cs" />
     <Compile Include="RFUPluginControl.cs">
       <SubType>UserControl</SubType>
@@ -222,6 +227,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="RFUPluginControl.resx">
       <DependentUpon>RFUPluginControl.cs</DependentUpon>
     </EmbeddedResource>

@@ -66,9 +66,24 @@ namespace ReactiveFieldsUpdater
             }
         }
 
-        private void tsbClose_Click(object sender, EventArgs e)
+        private void toolStripButtonClose_Click(object sender, EventArgs e)
         {
             CloseTool();
+        }
+
+        private void toolStripButtonLoad_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(GetEntities);
+        }
+
+        private void toolStripButtonUpdate_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(UpdateMetadata);
+        }
+
+        private void toolStripButtonClear_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(ClearOperations);
         }
 
         private void btnGetEntities_Click(object sender, EventArgs e)
@@ -265,7 +280,7 @@ namespace ReactiveFieldsUpdater
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    ExecuteMethod(ClearOperations); //VERIFICARE
+                    ExecuteMethod(ClearOperations);
                 }
             });
         }
