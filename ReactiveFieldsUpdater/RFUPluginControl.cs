@@ -78,33 +78,50 @@ namespace ReactiveFieldsUpdater
 
         private void toolStripButtonUpdate_Click(object sender, EventArgs e)
         {
+            if (operationsListView.Items.Count == 0)
+                return;
+
             ExecuteMethod(UpdateMetadata);
         }
 
         private void toolStripButtonClear_Click(object sender, EventArgs e)
         {
+            if (operationsListView.Items.Count == 0)
+                return;
+
             ExecuteMethod(ClearOperations);
-        }
-
-        private void btnGetEntities_Click(object sender, EventArgs e)
-        {
-            ExecuteMethod(GetEntities);
-        }
-
-        private void btnSelectAllOperations_Click(object sender, EventArgs e)
-        {
-            bool selectAll = btnSelectAllOperations.Text == "Select All";
-            ExecuteMethod(() => ToggleAllOperations(selectAll));
         }
 
         private void btnUpdateMetadata_Click(object sender, EventArgs e)
         {
+            if (operationsListView.Items.Count == 0)
+                return;
+
             ExecuteMethod(UpdateMetadata);
         }
 
         private void btnClearOperations_Click(object sender, EventArgs e)
         {
+            if (operationsListView.Items.Count == 0)
+                return;
+
             ExecuteMethod(ClearOperations);
+        }
+
+        private void lnkSelectAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (operationsListView.Items.Count == 0)
+                return;
+
+            ExecuteMethod(() => ToggleAllOperations(true));
+        }
+
+        private void lnkUnselectAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (operationsListView.Items.Count == 0)
+                return;
+
+            ExecuteMethod(() => ToggleAllOperations(false));
         }
 
         private void entitiesListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -128,8 +145,10 @@ namespace ReactiveFieldsUpdater
         private void operationsListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             var operation = e.Item.Tag as Operation;
-            if (operation != null)
-                ExecuteMethod(() => HandleCheckedItem(operation.Id, e.Item.Checked));
+            if (operation == null)
+                return;
+
+            ExecuteMethod(() => HandleCheckedItem(operation.Id, e.Item.Checked));
         }
 
 
@@ -234,7 +253,7 @@ namespace ReactiveFieldsUpdater
             {
                 Work = (worker, args) =>
                 {
-                    args.Result = RFUHelper.SetNewOperation(attributesGridView, _selectedEntity, _selectedField, e.RowIndex, Service);
+                    args.Result = RFUHelper.SetNewOperation(attributesGridView, _selectedEntity, _selectedField, e.RowIndex);
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -276,13 +295,13 @@ namespace ReactiveFieldsUpdater
             });
         }
 
-        private void ToggleAllOperations(bool selectAll)
+        private void ToggleAllOperations(bool toggle)
         {
             WorkAsync(new WorkAsyncInfo
             {
                 Work = (worker, args) =>
                 {
-                    RFUHelper.SelectAllOperations(selectAll);
+                    RFUHelper.SelectAllOperations(toggle);
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -294,10 +313,9 @@ namespace ReactiveFieldsUpdater
 
                     foreach (ListViewItem item in operationsListView.Items)
                     {
-                        item.Checked = selectAll;
+                        item.Checked = toggle;
                     }
 
-                    btnSelectAllOperations.Text = selectAll ? "Unselect All" : "Select All";
                     UpdateButtons();
                 }
             });
@@ -351,7 +369,6 @@ namespace ReactiveFieldsUpdater
                         attributesGridView.DataSource = null;
                     }
 
-                    btnSelectAllOperations.Text = "Select All"; //reset btn text
                     UpdateButtons();
                 }
             });
@@ -361,8 +378,6 @@ namespace ReactiveFieldsUpdater
 
         private void UpdateButtons()
         {
-            bool hasItems = operationsListView.Items.Count > 0;
-
             bool anyChecked = false;
             foreach (ListViewItem item in operationsListView.Items)
             {
@@ -373,7 +388,6 @@ namespace ReactiveFieldsUpdater
                 }
             }
 
-            btnSelectAllOperations.Enabled = hasItems;
             btnClearOperations.Enabled = anyChecked;
             btnUpdateMetadata.Enabled = anyChecked;
             toolStripButtonClear.Enabled = anyChecked;

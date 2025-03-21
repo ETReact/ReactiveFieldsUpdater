@@ -15,7 +15,7 @@ namespace ReactiveFieldsUpdater
     internal class RFUHelper
     {
         private static List<Operation> operationsList = new List<Operation>();
-        private static readonly int checkBoxWidth = 80;
+        private static readonly int checkBoxWidth = 50;
 
         /*---------------------------------------------------------------------------------   GET METHODS   */
         public static EntityMetadata[] RetrieveAllEntitiesMetadata(IOrganizationService service)
@@ -176,7 +176,7 @@ namespace ReactiveFieldsUpdater
 
 
         /*---------------------------------------------------------------------------------   HANDLE OPERATIONS LIST   */
-        public static List<ListViewItem> SetNewOperation(DataGridView dataGridView, string entityName, string fieldName, int rowIndex, IOrganizationService service)
+        public static List<ListViewItem> SetNewOperation(DataGridView dataGridView, string entityName, string fieldName, int rowIndex)
         {
             // gets the operation from the GridView
             var updatedDataRow = dataGridView.Rows[rowIndex];

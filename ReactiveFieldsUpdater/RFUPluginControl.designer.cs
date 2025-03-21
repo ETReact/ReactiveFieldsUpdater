@@ -41,7 +41,8 @@ namespace ReactiveFieldsUpdater
             this.fieldsBox = new System.Windows.Forms.GroupBox();
             this.attributesBox = new System.Windows.Forms.GroupBox();
             this.operationsBox = new System.Windows.Forms.GroupBox();
-            this.btnSelectAllOperations = new System.Windows.Forms.Button();
+            this.lnkUnselectAll = new System.Windows.Forms.LinkLabel();
+            this.lnkSelectAll = new System.Windows.Forms.LinkLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -94,12 +95,12 @@ namespace ReactiveFieldsUpdater
             // btnUpdateMetadata
             // 
             this.btnUpdateMetadata.Enabled = false;
-            this.btnUpdateMetadata.Location = new System.Drawing.Point(1260, 243);
+            this.btnUpdateMetadata.Location = new System.Drawing.Point(1304, 11);
             this.btnUpdateMetadata.Margin = new System.Windows.Forms.Padding(2);
             this.btnUpdateMetadata.Name = "btnUpdateMetadata";
-            this.btnUpdateMetadata.Size = new System.Drawing.Size(168, 46);
+            this.btnUpdateMetadata.Size = new System.Drawing.Size(124, 25);
             this.btnUpdateMetadata.TabIndex = 11;
-            this.btnUpdateMetadata.Text = "UPDATE !";
+            this.btnUpdateMetadata.Text = "Update!";
             this.btnUpdateMetadata.UseVisualStyleBackColor = true;
             this.btnUpdateMetadata.Click += new System.EventHandler(this.btnUpdateMetadata_Click);
             // 
@@ -107,23 +108,23 @@ namespace ReactiveFieldsUpdater
             // 
             this.btnClearOperations.Enabled = false;
             this.btnClearOperations.ForeColor = System.Drawing.Color.Red;
-            this.btnClearOperations.Location = new System.Drawing.Point(1088, 243);
+            this.btnClearOperations.Location = new System.Drawing.Point(1176, 11);
             this.btnClearOperations.Margin = new System.Windows.Forms.Padding(2);
             this.btnClearOperations.Name = "btnClearOperations";
-            this.btnClearOperations.Size = new System.Drawing.Size(168, 46);
+            this.btnClearOperations.Size = new System.Drawing.Size(124, 25);
             this.btnClearOperations.TabIndex = 10;
-            this.btnClearOperations.Text = "CLEAR";
+            this.btnClearOperations.Text = "Clear";
             this.btnClearOperations.UseVisualStyleBackColor = true;
             this.btnClearOperations.Click += new System.EventHandler(this.btnClearOperations_Click);
             // 
             // operationsListView
             // 
             this.operationsListView.HideSelection = false;
-            this.operationsListView.Location = new System.Drawing.Point(4, 49);
+            this.operationsListView.Location = new System.Drawing.Point(4, 40);
             this.operationsListView.Margin = new System.Windows.Forms.Padding(2);
             this.operationsListView.Name = "operationsListView";
-            this.operationsListView.Size = new System.Drawing.Size(1424, 190);
-            this.operationsListView.TabIndex = 9;
+            this.operationsListView.Size = new System.Drawing.Size(1424, 249);
+            this.operationsListView.TabIndex = 12;
             this.operationsListView.UseCompatibleStateImageBehavior = false;
             this.operationsListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.operationsListView_ItemChecked);
             // 
@@ -134,7 +135,7 @@ namespace ReactiveFieldsUpdater
             this.entitiesBox.Margin = new System.Windows.Forms.Padding(2);
             this.entitiesBox.Name = "entitiesBox";
             this.entitiesBox.Padding = new System.Windows.Forms.Padding(2);
-            this.entitiesBox.Size = new System.Drawing.Size(508, 297);
+            this.entitiesBox.Size = new System.Drawing.Size(508, 296);
             this.entitiesBox.TabIndex = 1;
             this.entitiesBox.TabStop = false;
             this.entitiesBox.Text = "Entities";
@@ -165,8 +166,9 @@ namespace ReactiveFieldsUpdater
             // 
             // operationsBox
             // 
+            this.operationsBox.Controls.Add(this.lnkUnselectAll);
+            this.operationsBox.Controls.Add(this.lnkSelectAll);
             this.operationsBox.Controls.Add(this.btnClearOperations);
-            this.operationsBox.Controls.Add(this.btnSelectAllOperations);
             this.operationsBox.Controls.Add(this.operationsListView);
             this.operationsBox.Controls.Add(this.btnUpdateMetadata);
             this.operationsBox.Location = new System.Drawing.Point(8, 334);
@@ -178,17 +180,27 @@ namespace ReactiveFieldsUpdater
             this.operationsBox.TabStop = false;
             this.operationsBox.Text = "Operations";
             // 
-            // btnSelectAllOperations
+            // lnkUnselectAll
             // 
-            this.btnSelectAllOperations.Enabled = false;
-            this.btnSelectAllOperations.Location = new System.Drawing.Point(5, 25);
-            this.btnSelectAllOperations.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSelectAllOperations.Name = "btnSelectAllOperations";
-            this.btnSelectAllOperations.Size = new System.Drawing.Size(80, 20);
-            this.btnSelectAllOperations.TabIndex = 8;
-            this.btnSelectAllOperations.Text = "Select All";
-            this.btnSelectAllOperations.UseVisualStyleBackColor = true;
-            this.btnSelectAllOperations.Click += new System.EventHandler(this.btnSelectAllOperations_Click);
+            this.lnkUnselectAll.AutoSize = true;
+            this.lnkUnselectAll.Location = new System.Drawing.Point(59, 22);
+            this.lnkUnselectAll.Name = "lnkUnselectAll";
+            this.lnkUnselectAll.Size = new System.Drawing.Size(63, 13);
+            this.lnkUnselectAll.TabIndex = 9;
+            this.lnkUnselectAll.TabStop = true;
+            this.lnkUnselectAll.Text = "Unselect All";
+            this.lnkUnselectAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkUnselectAll_LinkClicked);
+            // 
+            // lnkSelectAll
+            // 
+            this.lnkSelectAll.AutoSize = true;
+            this.lnkSelectAll.Location = new System.Drawing.Point(6, 22);
+            this.lnkSelectAll.Name = "lnkSelectAll";
+            this.lnkSelectAll.Size = new System.Drawing.Size(48, 13);
+            this.lnkSelectAll.TabIndex = 8;
+            this.lnkSelectAll.TabStop = true;
+            this.lnkSelectAll.Text = "SelectAll";
+            this.lnkSelectAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSelectAll_LinkClicked);
             // 
             // toolStrip
             // 
@@ -266,6 +278,7 @@ namespace ReactiveFieldsUpdater
             this.fieldsBox.ResumeLayout(false);
             this.attributesBox.ResumeLayout(false);
             this.operationsBox.ResumeLayout(false);
+            this.operationsBox.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -279,7 +292,6 @@ namespace ReactiveFieldsUpdater
         private DataGridView attributesGridView;
         private ListView operationsListView;
         private Button btnUpdateMetadata;
-        private Button btnSelectAllOperations;
         private Button btnClearOperations;
         private GroupBox entitiesBox;
         private GroupBox fieldsBox;
@@ -291,5 +303,7 @@ namespace ReactiveFieldsUpdater
         private ToolStripButton toolStripButtonUpdate;
         private ToolStripButton toolStripButtonClear;
         private ToolStripSeparator toolStripSeparator;
+        private LinkLabel lnkUnselectAll;
+        private LinkLabel lnkSelectAll;
     }
 }
