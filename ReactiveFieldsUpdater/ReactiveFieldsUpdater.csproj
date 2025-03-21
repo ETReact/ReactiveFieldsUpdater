@@ -206,6 +206,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\AttributeListItem.cs" />
+    <Compile Include="Model\Operation.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -219,7 +221,7 @@
       <DependentUpon>RFUPluginControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RFUHelper.cs" />
+    <Compile Include="Utility\RFUHelper.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>

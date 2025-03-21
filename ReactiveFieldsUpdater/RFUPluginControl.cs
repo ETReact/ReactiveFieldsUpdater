@@ -91,6 +91,12 @@ namespace ReactiveFieldsUpdater
             ExecuteMethod(GetEntities);
         }
 
+        private void btnSelectAllOperations_Click(object sender, EventArgs e)
+        {
+            bool selectAll = btnSelectAllOperations.Text == "Select All";
+            ExecuteMethod(() => ToggleAllOperations(selectAll));
+        }
+
         private void btnUpdateMetadata_Click(object sender, EventArgs e)
         {
             ExecuteMethod(UpdateMetadata);
@@ -208,7 +214,7 @@ namespace ReactiveFieldsUpdater
                         return;
                     }
 
-                    if (args.Result is List<AttributesListItem> result)
+                    if (args.Result is List<AttributeListItem> result)
                     {
                         attributesGridView.BeginInvoke(new Action(() =>
                         {
@@ -235,6 +241,7 @@ namespace ReactiveFieldsUpdater
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
                     var result = args.Result as List<ListViewItem>;
@@ -242,6 +249,8 @@ namespace ReactiveFieldsUpdater
                     {
                         RFUHelper.UpdateListView(operationsListView, result);
                     }
+
+                    UpdateButtons();
                 }
             });
         }
@@ -259,7 +268,37 @@ namespace ReactiveFieldsUpdater
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
+
+                    UpdateButtons();
+                }
+            });
+        }
+
+        private void ToggleAllOperations(bool selectAll)
+        {
+            WorkAsync(new WorkAsyncInfo
+            {
+                Work = (worker, args) =>
+                {
+                    RFUHelper.SelectAllOperations(selectAll);
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    foreach (ListViewItem item in operationsListView.Items)
+                    {
+                        item.Checked = selectAll;
+                    }
+
+                    btnSelectAllOperations.Text = selectAll ? "Unselect All" : "Select All";
+                    UpdateButtons();
                 }
             });
         }
@@ -278,6 +317,7 @@ namespace ReactiveFieldsUpdater
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
                     ExecuteMethod(ClearOperations);
@@ -299,6 +339,7 @@ namespace ReactiveFieldsUpdater
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                     }
 
                     var result = args.Result as List<ListViewItem>;
@@ -309,8 +350,34 @@ namespace ReactiveFieldsUpdater
                         attributesGridView.Rows.Clear();
                         attributesGridView.DataSource = null;
                     }
+
+                    btnSelectAllOperations.Text = "Select All"; //reset btn text
+                    UpdateButtons();
                 }
             });
+        }
+
+        // ------------------------------------------------------------------------------------------ //
+
+        private void UpdateButtons()
+        {
+            bool hasItems = operationsListView.Items.Count > 0;
+
+            bool anyChecked = false;
+            foreach (ListViewItem item in operationsListView.Items)
+            {
+                if (item.Checked)
+                {
+                    anyChecked = true;
+                    break;
+                }
+            }
+
+            btnSelectAllOperations.Enabled = hasItems;
+            btnClearOperations.Enabled = anyChecked;
+            btnUpdateMetadata.Enabled = anyChecked;
+            toolStripButtonClear.Enabled = anyChecked;
+            toolStripButtonUpdate.Enabled = anyChecked;
         }
     }
 }

@@ -7,13 +7,15 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Data;
+using Microsoft.Crm.Sdk.Messages;
+using System.Web.Services.Description;
 
 namespace ReactiveFieldsUpdater
 {
     internal class RFUHelper
     {
         private static List<Operation> operationsList = new List<Operation>();
-
+        private static readonly int checkBoxWidth = 80;
 
         /*---------------------------------------------------------------------------------   GET METHODS   */
         public static EntityMetadata[] RetrieveAllEntitiesMetadata(IOrganizationService service)
@@ -25,7 +27,7 @@ namespace ReactiveFieldsUpdater
             return response.EntityMetadata;
         }
 
-        public static EntityMetadata RetrieveEntitiyMetadata(string entityName, IOrganizationService service)
+        public static EntityMetadata RetrieveEntityMetadata(string entityName, IOrganizationService service)
         {
             RetrieveEntityRequest request = new RetrieveEntityRequest
             {
@@ -42,23 +44,31 @@ namespace ReactiveFieldsUpdater
         {
             return allMetadata
             .Where(val => val.DisplayName?.UserLocalizedLabel != null)
-            .Select(val => new ListViewItem(new[] { val.LogicalName }) { Tag = val })
-            .ToList();
+            .Select(val => new ListViewItem(new[]
+                {
+                    val.LogicalName,
+                    val.DisplayName?.UserLocalizedLabel?.Label
+                }
+            )
+            { Tag = val }
+            ).ToList();
         }
 
         public static List<ListViewItem> GetEntityFields(string entityName, IOrganizationService service)
         {
-            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
+            var currentEntity = RetrieveEntityMetadata(entityName, service);
 
             return currentEntity.Attributes
                 .Where(attribute =>
-                (bool)attribute.AttributeTypeName?.Value.Contains("String")
+                attribute.DisplayName?.UserLocalizedLabel != null &&
+                ((bool)attribute.AttributeTypeName?.Value.Contains("String")
                 ||
-                (bool)attribute.AttributeTypeName?.Value.Contains("Integer")
+                (bool)attribute.AttributeTypeName?.Value.Contains("Integer"))
                 )
                 .Select(attribute => new ListViewItem(new[]
                     {
                         attribute.LogicalName,
+                        attribute.DisplayName?.UserLocalizedLabel?.Label,
                         attribute.AttributeTypeName?.Value.Replace("Type", "") ?? "Unknown"
                     }
                 )
@@ -66,19 +76,19 @@ namespace ReactiveFieldsUpdater
                 ).ToList();
         }
 
-        public static List<AttributesListItem> GetFieldAttributes(string entityName, string fieldName, IOrganizationService service)
+        public static List<AttributeListItem> GetFieldAttributes(string entityName, string fieldName, IOrganizationService service)
         {
-            var currentEntity = RetrieveEntitiyMetadata(entityName, service);
+            var currentEntity = RetrieveEntityMetadata(entityName, service);
             var currentField = currentEntity.Attributes.FirstOrDefault(p => p.LogicalName == fieldName);
 
             if (currentField == null)
-                return new List<AttributesListItem>();
+                return new List<AttributeListItem>();
 
             return currentField.GetType()
                 .GetProperties()
                 .Where(p => RFUPluginControl.mySettings.Config_Props.Contains(p.Name))
                 .OrderBy(p => p.Name)
-                .Select(p => new AttributesListItem
+                .Select(p => new AttributeListItem
                 {
                     AttributeName = p.Name,
                     AttributeValue = p.GetValue(currentField) ?? "N/A"
@@ -122,19 +132,21 @@ namespace ReactiveFieldsUpdater
             {
 
                 case "entitiesListView":
-                    listView.Columns.Add("Logical Name", availableWidth, HorizontalAlignment.Left);
+                    listView.Columns.Add("Logical Name", availableWidth / 2, HorizontalAlignment.Left);
+                    listView.Columns.Add("Display Name", availableWidth / 2, HorizontalAlignment.Left);
                     break;
                 case "fieldsListView":
-                    listView.Columns.Add("Field Logical Name", availableWidth / 2, HorizontalAlignment.Left);
-                    listView.Columns.Add("Field Type", availableWidth / 2, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Logical Name", availableWidth / 3, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Display Name", availableWidth / 3, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field Type", availableWidth / 3, HorizontalAlignment.Left);
                     break;
                 case "operationsListView":
                     listView.CheckBoxes = true;
-                    listView.Columns.Add("", 50, HorizontalAlignment.Center);
-                    listView.Columns.Add("Entity", (availableWidth - 50) / 4, HorizontalAlignment.Left);
-                    listView.Columns.Add("Field", (availableWidth - 50) / 4, HorizontalAlignment.Left);
-                    listView.Columns.Add("Attribute", (availableWidth - 50) / 4, HorizontalAlignment.Left);
-                    listView.Columns.Add("Value", (availableWidth - 50) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("", checkBoxWidth, HorizontalAlignment.Center);
+                    listView.Columns.Add("Entity", (availableWidth - checkBoxWidth) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Field", (availableWidth - checkBoxWidth) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Attribute", (availableWidth - checkBoxWidth) / 4, HorizontalAlignment.Left);
+                    listView.Columns.Add("Value", (availableWidth - checkBoxWidth) / 4, HorizontalAlignment.Left);
                     break;
                 default:
                     break;
@@ -207,6 +219,42 @@ namespace ReactiveFieldsUpdater
             }
         }
 
+        public static void SelectAllOperations(bool toggle)
+        {
+            foreach (Operation operation in operationsList)
+            {
+                operation.Checked = toggle;
+            }
+        }
+
+        public static List<ListViewItem> ClearOperations()
+        {
+            operationsList.RemoveAll(c => c.Checked);
+
+            // returns all the operations as a ListViewItem List<>
+            return GetItemsFromOperations();
+        }
+
+        public static List<ListViewItem> GetItemsFromOperations()
+        {
+            return operationsList
+                .Select(operation => new ListViewItem(new[]
+                    {
+                        String.Empty,
+                        operation.EntityName,
+                        operation.EntityField,
+                        operation.AttributeName,
+                        (string)operation.AttributeValue
+                    }
+                )
+                { Tag = operation }
+                )
+                .Select((item, index) => new { item, index })
+                .OrderByDescending(x => x.index)
+                .Select(x => x.item)
+                .ToList();
+        }
+
         /*---------------------------------------------------------------------------------   UPDATE METADATA   */
         public static void UpdateMetadata(IOrganizationService service)
         {
@@ -218,7 +266,7 @@ namespace ReactiveFieldsUpdater
                 if (string.IsNullOrEmpty(operation.EntityName) || string.IsNullOrEmpty(operation.EntityField))
                     continue;
 
-                var currentEntityMetadata = RetrieveEntitiyMetadata(operation.EntityName, service);
+                var currentEntityMetadata = RetrieveEntityMetadata(operation.EntityName, service);
                 var currentField = currentEntityMetadata.Attributes.FirstOrDefault(p => p.LogicalName == operation.EntityField);
 
                 if (currentField == null)
@@ -262,55 +310,5 @@ namespace ReactiveFieldsUpdater
                 }
             }
         }
-
-        public static List<ListViewItem> ClearOperations()
-        {
-            operationsList.RemoveAll(c => c.Checked);
-
-            // returns all the operations as a ListViewItem List<>
-            return GetItemsFromOperations();
-        }
-
-
-
-        public static List<ListViewItem> GetItemsFromOperations()
-        {
-            return operationsList
-                .Select(operation => new ListViewItem(new[]
-                    {
-                        String.Empty,
-                        operation.EntityName,
-                        operation.EntityField,
-                        operation.AttributeName,
-                        (string)operation.AttributeValue
-                    }
-                )
-                { Tag = operation }
-                )
-                .Select((item, index) => new { item, index })
-                .OrderByDescending(x => x.index)
-                .Select(x => x.item)
-                .ToList();
-        }
-
-
-    }
-
-    class AttributesListItem
-    {
-        public string AttributeName { get; set; }
-        public dynamic AttributeValue { get; set; }
-
-    }
-
-    class Operation
-    {
-        public Guid Id { get; set; }
-        public bool Checked { get; set; }
-        public string EntityName { get; set; }
-        public string EntityField { get; set; }
-        public string AttributeName { get; set; }
-        public dynamic AttributeValue { get; set; }
-
     }
 }
