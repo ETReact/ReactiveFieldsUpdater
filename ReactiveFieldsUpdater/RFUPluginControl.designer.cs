@@ -46,8 +46,8 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonLoad = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonUpdate = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonUpdate = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.attributesGridView)).BeginInit();
             this.entitiesBox.SuspendLayout();
             this.fieldsBox.SuspendLayout();
@@ -61,7 +61,7 @@ namespace ReactiveFieldsUpdater
             this.attributesGridView.AllowUserToAddRows = false;
             this.attributesGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.attributesGridView.Location = new System.Drawing.Point(4, 23);
-            this.attributesGridView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.attributesGridView.Margin = new System.Windows.Forms.Padding(2);
             this.attributesGridView.Name = "attributesGridView";
             this.attributesGridView.RowHeadersWidth = 51;
             this.attributesGridView.RowTemplate.Height = 24;
@@ -73,7 +73,7 @@ namespace ReactiveFieldsUpdater
             // 
             this.entitiesListView.HideSelection = false;
             this.entitiesListView.Location = new System.Drawing.Point(4, 23);
-            this.entitiesListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.entitiesListView.Margin = new System.Windows.Forms.Padding(2);
             this.entitiesListView.Name = "entitiesListView";
             this.entitiesListView.Size = new System.Drawing.Size(500, 268);
             this.entitiesListView.TabIndex = 2;
@@ -84,7 +84,7 @@ namespace ReactiveFieldsUpdater
             // 
             this.fieldsListView.HideSelection = false;
             this.fieldsListView.Location = new System.Drawing.Point(4, 23);
-            this.fieldsListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fieldsListView.Margin = new System.Windows.Forms.Padding(2);
             this.fieldsListView.Name = "fieldsListView";
             this.fieldsListView.Size = new System.Drawing.Size(500, 268);
             this.fieldsListView.TabIndex = 4;
@@ -93,34 +93,34 @@ namespace ReactiveFieldsUpdater
             // 
             // btnUpdateMetadata
             // 
-            this.btnUpdateMetadata.Location = new System.Drawing.Point(1241, 243);
-            this.btnUpdateMetadata.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnUpdateMetadata.Enabled = false;
+            this.btnUpdateMetadata.Location = new System.Drawing.Point(1260, 243);
+            this.btnUpdateMetadata.Margin = new System.Windows.Forms.Padding(2);
             this.btnUpdateMetadata.Name = "btnUpdateMetadata";
-            this.btnUpdateMetadata.Size = new System.Drawing.Size(187, 46);
+            this.btnUpdateMetadata.Size = new System.Drawing.Size(168, 46);
             this.btnUpdateMetadata.TabIndex = 11;
             this.btnUpdateMetadata.Text = "UPDATE !";
             this.btnUpdateMetadata.UseVisualStyleBackColor = true;
-            this.btnUpdateMetadata.Enabled = false;
             this.btnUpdateMetadata.Click += new System.EventHandler(this.btnUpdateMetadata_Click);
             // 
             // btnClearOperations
             // 
+            this.btnClearOperations.Enabled = false;
             this.btnClearOperations.ForeColor = System.Drawing.Color.Red;
-            this.btnClearOperations.Location = new System.Drawing.Point(1050, 243);
-            this.btnClearOperations.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnClearOperations.Location = new System.Drawing.Point(1088, 243);
+            this.btnClearOperations.Margin = new System.Windows.Forms.Padding(2);
             this.btnClearOperations.Name = "btnClearOperations";
-            this.btnClearOperations.Size = new System.Drawing.Size(187, 46);
+            this.btnClearOperations.Size = new System.Drawing.Size(168, 46);
             this.btnClearOperations.TabIndex = 10;
             this.btnClearOperations.Text = "CLEAR";
             this.btnClearOperations.UseVisualStyleBackColor = true;
-            this.btnClearOperations.Enabled = false;
             this.btnClearOperations.Click += new System.EventHandler(this.btnClearOperations_Click);
             // 
             // operationsListView
             // 
             this.operationsListView.HideSelection = false;
             this.operationsListView.Location = new System.Drawing.Point(4, 49);
-            this.operationsListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.operationsListView.Margin = new System.Windows.Forms.Padding(2);
             this.operationsListView.Name = "operationsListView";
             this.operationsListView.Size = new System.Drawing.Size(1424, 190);
             this.operationsListView.TabIndex = 9;
@@ -131,9 +131,9 @@ namespace ReactiveFieldsUpdater
             // 
             this.entitiesBox.Controls.Add(this.entitiesListView);
             this.entitiesBox.Location = new System.Drawing.Point(8, 33);
-            this.entitiesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.entitiesBox.Margin = new System.Windows.Forms.Padding(2);
             this.entitiesBox.Name = "entitiesBox";
-            this.entitiesBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.entitiesBox.Padding = new System.Windows.Forms.Padding(2);
             this.entitiesBox.Size = new System.Drawing.Size(508, 297);
             this.entitiesBox.TabIndex = 1;
             this.entitiesBox.TabStop = false;
@@ -143,9 +143,9 @@ namespace ReactiveFieldsUpdater
             // 
             this.fieldsBox.Controls.Add(this.fieldsListView);
             this.fieldsBox.Location = new System.Drawing.Point(520, 33);
-            this.fieldsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fieldsBox.Margin = new System.Windows.Forms.Padding(2);
             this.fieldsBox.Name = "fieldsBox";
-            this.fieldsBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fieldsBox.Padding = new System.Windows.Forms.Padding(2);
             this.fieldsBox.Size = new System.Drawing.Size(508, 296);
             this.fieldsBox.TabIndex = 3;
             this.fieldsBox.TabStop = false;
@@ -155,9 +155,9 @@ namespace ReactiveFieldsUpdater
             // 
             this.attributesBox.Controls.Add(this.attributesGridView);
             this.attributesBox.Location = new System.Drawing.Point(1032, 33);
-            this.attributesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.attributesBox.Margin = new System.Windows.Forms.Padding(2);
             this.attributesBox.Name = "attributesBox";
-            this.attributesBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.attributesBox.Padding = new System.Windows.Forms.Padding(2);
             this.attributesBox.Size = new System.Drawing.Size(409, 296);
             this.attributesBox.TabIndex = 5;
             this.attributesBox.TabStop = false;
@@ -170,9 +170,9 @@ namespace ReactiveFieldsUpdater
             this.operationsBox.Controls.Add(this.operationsListView);
             this.operationsBox.Controls.Add(this.btnUpdateMetadata);
             this.operationsBox.Location = new System.Drawing.Point(8, 334);
-            this.operationsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.operationsBox.Margin = new System.Windows.Forms.Padding(2);
             this.operationsBox.Name = "operationsBox";
-            this.operationsBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.operationsBox.Padding = new System.Windows.Forms.Padding(2);
             this.operationsBox.Size = new System.Drawing.Size(1433, 295);
             this.operationsBox.TabIndex = 7;
             this.operationsBox.TabStop = false;
@@ -180,14 +180,14 @@ namespace ReactiveFieldsUpdater
             // 
             // btnSelectAllOperations
             // 
+            this.btnSelectAllOperations.Enabled = false;
             this.btnSelectAllOperations.Location = new System.Drawing.Point(5, 25);
-            this.btnSelectAllOperations.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSelectAllOperations.Margin = new System.Windows.Forms.Padding(2);
             this.btnSelectAllOperations.Name = "btnSelectAllOperations";
             this.btnSelectAllOperations.Size = new System.Drawing.Size(80, 20);
             this.btnSelectAllOperations.TabIndex = 8;
             this.btnSelectAllOperations.Text = "Select All";
             this.btnSelectAllOperations.UseVisualStyleBackColor = true;
-            this.btnSelectAllOperations.Enabled = false;
             this.btnSelectAllOperations.Click += new System.EventHandler(this.btnSelectAllOperations_Click);
             // 
             // toolStrip
@@ -197,8 +197,8 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonClose,
             this.toolStripSeparator,
             this.toolStripButtonLoad,
-            this.toolStripButtonUpdate,
-            this.toolStripButtonClear});
+            this.toolStripButtonClear,
+            this.toolStripButtonUpdate});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(1448, 27);
@@ -229,25 +229,25 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonLoad.Text = "Get Entities";
             this.toolStripButtonLoad.Click += new System.EventHandler(this.toolStripButtonLoad_Click);
             // 
-            // toolStripButtonUpdate
-            // 
-            this.toolStripButtonUpdate.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpdate.Image")));
-            this.toolStripButtonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonUpdate.Name = "toolStripButtonUpdate";
-            this.toolStripButtonUpdate.Size = new System.Drawing.Size(72, 24);
-            this.toolStripButtonUpdate.Text = "Update!";
-            this.toolStripButtonUpdate.Enabled = false;
-            this.toolStripButtonUpdate.Click += new System.EventHandler(this.toolStripButtonUpdate_Click);
-            // 
             // toolStripButtonClear
             // 
+            this.toolStripButtonClear.Enabled = false;
             this.toolStripButtonClear.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClear.Image")));
             this.toolStripButtonClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonClear.Name = "toolStripButtonClear";
             this.toolStripButtonClear.Size = new System.Drawing.Size(58, 24);
             this.toolStripButtonClear.Text = "Clear";
-            this.toolStripButtonClear.Enabled = false;
             this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
+            // 
+            // toolStripButtonUpdate
+            // 
+            this.toolStripButtonUpdate.Enabled = false;
+            this.toolStripButtonUpdate.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpdate.Image")));
+            this.toolStripButtonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonUpdate.Name = "toolStripButtonUpdate";
+            this.toolStripButtonUpdate.Size = new System.Drawing.Size(72, 24);
+            this.toolStripButtonUpdate.Text = "Update!";
+            this.toolStripButtonUpdate.Click += new System.EventHandler(this.toolStripButtonUpdate_Click);
             // 
             // RFUPluginControl
             // 
