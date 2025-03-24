@@ -151,6 +151,12 @@ namespace ReactiveFieldsUpdater
             ExecuteMethod(() => HandleCheckedItem(operation.Id, e.Item.Checked));
         }
 
+        private void plugin_Resize(object sender, EventArgs e)
+        {
+            RFUHelper.ResizeListViewColumns(entitiesListView);
+            RFUHelper.ResizeListViewColumns(fieldsListView);
+            RFUHelper.ResizeListViewColumns(operationsListView);
+        }
 
         // ------------------------------------------------------------------------------------------ //
 

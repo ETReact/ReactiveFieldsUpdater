@@ -130,7 +130,6 @@ namespace ReactiveFieldsUpdater
 
             switch (listView?.Name)
             {
-
                 case "entitiesListView":
                     listView.Columns.Add("Logical Name", availableWidth / 2, HorizontalAlignment.Left);
                     listView.Columns.Add("Display Name", availableWidth / 2, HorizontalAlignment.Left);
@@ -153,6 +152,20 @@ namespace ReactiveFieldsUpdater
             }
 
             return listView;
+        }
+
+        public static void ResizeListViewColumns(ListView listView)
+        {
+            if (listView.Columns.Count == 0) return;
+
+            int availableWidth = listView.ClientSize.Width;
+            int columnCount = listView.Columns.Count;
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                if (!String.IsNullOrEmpty(listView.Columns[i].Text))
+                    listView.Columns[i].Width = availableWidth / columnCount;
+            }
         }
 
         public static void UpdateDataGridView<T>(DataGridView dataGridView, List<T> rows)

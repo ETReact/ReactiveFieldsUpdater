@@ -59,6 +59,7 @@ namespace ReactiveFieldsUpdater
             this.toolStrip.SuspendLayout();
             this.tableLayoutPanel_1.SuspendLayout();
             this.tableLayoutPanel_2.SuspendLayout();
+            this.Resize += new System.EventHandler(this.plugin_Resize);
             this.SuspendLayout();
             // 
             // attributesGridView
@@ -67,12 +68,12 @@ namespace ReactiveFieldsUpdater
             this.attributesGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.attributesGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.attributesGridView.Location = new System.Drawing.Point(5, 28);
-            this.attributesGridView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.attributesGridView.Location = new System.Drawing.Point(4, 23);
+            this.attributesGridView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.attributesGridView.Name = "attributesGridView";
             this.attributesGridView.RowHeadersWidth = 51;
             this.attributesGridView.RowTemplate.Height = 24;
-            this.attributesGridView.Size = new System.Drawing.Size(618, 329);
+            this.attributesGridView.Size = new System.Drawing.Size(466, 267);
             this.attributesGridView.TabIndex = 6;
             this.attributesGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.SetNewOperation);
             // 
@@ -81,10 +82,10 @@ namespace ReactiveFieldsUpdater
             this.entitiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.entitiesListView.HideSelection = false;
-            this.entitiesListView.Location = new System.Drawing.Point(13, 28);
-            this.entitiesListView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.entitiesListView.Location = new System.Drawing.Point(10, 23);
+            this.entitiesListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.entitiesListView.Name = "entitiesListView";
-            this.entitiesListView.Size = new System.Drawing.Size(619, 329);
+            this.entitiesListView.Size = new System.Drawing.Size(465, 268);
             this.entitiesListView.TabIndex = 2;
             this.entitiesListView.UseCompatibleStateImageBehavior = false;
             this.entitiesListView.SelectedIndexChanged += new System.EventHandler(this.entitiesListView_SelectedIndexChanged);
@@ -94,10 +95,10 @@ namespace ReactiveFieldsUpdater
             this.fieldsListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fieldsListView.HideSelection = false;
-            this.fieldsListView.Location = new System.Drawing.Point(5, 28);
-            this.fieldsListView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.fieldsListView.Location = new System.Drawing.Point(4, 23);
+            this.fieldsListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.fieldsListView.Name = "fieldsListView";
-            this.fieldsListView.Size = new System.Drawing.Size(626, 329);
+            this.fieldsListView.Size = new System.Drawing.Size(470, 268);
             this.fieldsListView.TabIndex = 4;
             this.fieldsListView.UseCompatibleStateImageBehavior = false;
             this.fieldsListView.SelectedIndexChanged += new System.EventHandler(this.fieldsListView_SelectedIndexChanged);
@@ -106,10 +107,10 @@ namespace ReactiveFieldsUpdater
             // 
             this.btnUpdateMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateMetadata.Enabled = false;
-            this.btnUpdateMetadata.Location = new System.Drawing.Point(1745, 13);
-            this.btnUpdateMetadata.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnUpdateMetadata.Location = new System.Drawing.Point(1311, 11);
+            this.btnUpdateMetadata.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnUpdateMetadata.Name = "btnUpdateMetadata";
-            this.btnUpdateMetadata.Size = new System.Drawing.Size(165, 31);
+            this.btnUpdateMetadata.Size = new System.Drawing.Size(124, 25);
             this.btnUpdateMetadata.TabIndex = 11;
             this.btnUpdateMetadata.Text = "Update!";
             this.btnUpdateMetadata.UseVisualStyleBackColor = true;
@@ -120,10 +121,10 @@ namespace ReactiveFieldsUpdater
             this.btnClearOperations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearOperations.Enabled = false;
             this.btnClearOperations.ForeColor = System.Drawing.Color.Red;
-            this.btnClearOperations.Location = new System.Drawing.Point(1574, 13);
-            this.btnClearOperations.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnClearOperations.Location = new System.Drawing.Point(1183, 11);
+            this.btnClearOperations.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnClearOperations.Name = "btnClearOperations";
-            this.btnClearOperations.Size = new System.Drawing.Size(165, 31);
+            this.btnClearOperations.Size = new System.Drawing.Size(124, 25);
             this.btnClearOperations.TabIndex = 10;
             this.btnClearOperations.Text = "Clear";
             this.btnClearOperations.UseVisualStyleBackColor = true;
@@ -134,10 +135,10 @@ namespace ReactiveFieldsUpdater
             this.operationsListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.operationsListView.HideSelection = false;
-            this.operationsListView.Location = new System.Drawing.Point(13, 49);
-            this.operationsListView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.operationsListView.Location = new System.Drawing.Point(10, 40);
+            this.operationsListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.operationsListView.Name = "operationsListView";
-            this.operationsListView.Size = new System.Drawing.Size(1897, 329);
+            this.operationsListView.Size = new System.Drawing.Size(1425, 268);
             this.operationsListView.TabIndex = 12;
             this.operationsListView.UseCompatibleStateImageBehavior = false;
             this.operationsListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.operationsListView_ItemChecked);
@@ -147,11 +148,11 @@ namespace ReactiveFieldsUpdater
             this.entitiesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.entitiesBox.Controls.Add(this.entitiesListView);
-            this.entitiesBox.Location = new System.Drawing.Point(3, 2);
-            this.entitiesBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.entitiesBox.Location = new System.Drawing.Point(2, 2);
+            this.entitiesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.entitiesBox.Name = "entitiesBox";
-            this.entitiesBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.entitiesBox.Size = new System.Drawing.Size(637, 364);
+            this.entitiesBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.entitiesBox.Size = new System.Drawing.Size(478, 296);
             this.entitiesBox.TabIndex = 1;
             this.entitiesBox.TabStop = false;
             this.entitiesBox.Text = "Entities";
@@ -161,11 +162,11 @@ namespace ReactiveFieldsUpdater
             this.fieldsBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fieldsBox.Controls.Add(this.fieldsListView);
-            this.fieldsBox.Location = new System.Drawing.Point(646, 2);
-            this.fieldsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.fieldsBox.Location = new System.Drawing.Point(484, 2);
+            this.fieldsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.fieldsBox.Name = "fieldsBox";
-            this.fieldsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.fieldsBox.Size = new System.Drawing.Size(637, 364);
+            this.fieldsBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fieldsBox.Size = new System.Drawing.Size(478, 296);
             this.fieldsBox.TabIndex = 3;
             this.fieldsBox.TabStop = false;
             this.fieldsBox.Text = "Fields";
@@ -175,11 +176,11 @@ namespace ReactiveFieldsUpdater
             this.attributesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.attributesBox.Controls.Add(this.attributesGridView);
-            this.attributesBox.Location = new System.Drawing.Point(1289, 2);
-            this.attributesBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.attributesBox.Location = new System.Drawing.Point(966, 2);
+            this.attributesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.attributesBox.Name = "attributesBox";
-            this.attributesBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.attributesBox.Size = new System.Drawing.Size(638, 364);
+            this.attributesBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.attributesBox.Size = new System.Drawing.Size(480, 296);
             this.attributesBox.TabIndex = 5;
             this.attributesBox.TabStop = false;
             this.attributesBox.Text = "Attributes";
@@ -193,11 +194,11 @@ namespace ReactiveFieldsUpdater
             this.operationsBox.Controls.Add(this.btnClearOperations);
             this.operationsBox.Controls.Add(this.operationsListView);
             this.operationsBox.Controls.Add(this.btnUpdateMetadata);
-            this.operationsBox.Location = new System.Drawing.Point(3, 2);
-            this.operationsBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.operationsBox.Location = new System.Drawing.Point(2, 2);
+            this.operationsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.operationsBox.Name = "operationsBox";
-            this.operationsBox.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.operationsBox.Size = new System.Drawing.Size(1924, 530);
+            this.operationsBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.operationsBox.Size = new System.Drawing.Size(1444, 430);
             this.operationsBox.TabIndex = 7;
             this.operationsBox.TabStop = false;
             this.operationsBox.Text = "Operations";
@@ -205,10 +206,9 @@ namespace ReactiveFieldsUpdater
             // lnkUnselectAll
             // 
             this.lnkUnselectAll.AutoSize = true;
-            this.lnkUnselectAll.Location = new System.Drawing.Point(83, 26);
-            this.lnkUnselectAll.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lnkUnselectAll.Location = new System.Drawing.Point(61, 21);
             this.lnkUnselectAll.Name = "lnkUnselectAll";
-            this.lnkUnselectAll.Size = new System.Drawing.Size(78, 16);
+            this.lnkUnselectAll.Size = new System.Drawing.Size(63, 13);
             this.lnkUnselectAll.TabIndex = 9;
             this.lnkUnselectAll.TabStop = true;
             this.lnkUnselectAll.Text = "Unselect All";
@@ -217,10 +217,9 @@ namespace ReactiveFieldsUpdater
             // lnkSelectAll
             // 
             this.lnkSelectAll.AutoSize = true;
-            this.lnkSelectAll.Location = new System.Drawing.Point(16, 26);
-            this.lnkSelectAll.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lnkSelectAll.Location = new System.Drawing.Point(10, 21);
             this.lnkSelectAll.Name = "lnkSelectAll";
-            this.lnkSelectAll.Size = new System.Drawing.Size(60, 16);
+            this.lnkSelectAll.Size = new System.Drawing.Size(48, 13);
             this.lnkSelectAll.TabIndex = 8;
             this.lnkSelectAll.TabStop = true;
             this.lnkSelectAll.Text = "SelectAll";
@@ -237,7 +236,7 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonUpdate});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1930, 27);
+            this.toolStrip.Size = new System.Drawing.Size(1448, 27);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -247,7 +246,7 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonClose.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClose.Image")));
             this.toolStripButtonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonClose.Name = "toolStripButtonClose";
-            this.toolStripButtonClose.Size = new System.Drawing.Size(29, 24);
+            this.toolStripButtonClose.Size = new System.Drawing.Size(24, 24);
             this.toolStripButtonClose.Text = "Close this tool";
             this.toolStripButtonClose.Click += new System.EventHandler(this.toolStripButtonClose_Click);
             // 
@@ -261,7 +260,7 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonLoad.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonLoad.Image")));
             this.toolStripButtonLoad.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonLoad.Name = "toolStripButtonLoad";
-            this.toolStripButtonLoad.Size = new System.Drawing.Size(108, 24);
+            this.toolStripButtonLoad.Size = new System.Drawing.Size(90, 24);
             this.toolStripButtonLoad.Text = "Get Entities";
             this.toolStripButtonLoad.Click += new System.EventHandler(this.toolStripButtonLoad_Click);
             // 
@@ -271,7 +270,7 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonClear.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClear.Image")));
             this.toolStripButtonClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonClear.Name = "toolStripButtonClear";
-            this.toolStripButtonClear.Size = new System.Drawing.Size(67, 24);
+            this.toolStripButtonClear.Size = new System.Drawing.Size(58, 24);
             this.toolStripButtonClear.Text = "Clear";
             this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
             // 
@@ -281,7 +280,7 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonUpdate.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonUpdate.Image")));
             this.toolStripButtonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonUpdate.Name = "toolStripButtonUpdate";
-            this.toolStripButtonUpdate.Size = new System.Drawing.Size(86, 24);
+            this.toolStripButtonUpdate.Size = new System.Drawing.Size(72, 24);
             this.toolStripButtonUpdate.Text = "Update!";
             this.toolStripButtonUpdate.Click += new System.EventHandler(this.toolStripButtonUpdate_Click);
             // 
@@ -296,11 +295,12 @@ namespace ReactiveFieldsUpdater
             this.tableLayoutPanel_1.Controls.Add(this.attributesBox, 2, 0);
             this.tableLayoutPanel_1.Controls.Add(this.fieldsBox, 1, 0);
             this.tableLayoutPanel_1.Controls.Add(this.entitiesBox, 0, 0);
-            this.tableLayoutPanel_1.Location = new System.Drawing.Point(0, 31);
+            this.tableLayoutPanel_1.Location = new System.Drawing.Point(0, 25);
+            this.tableLayoutPanel_1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel_1.Name = "tableLayoutPanel_1";
             this.tableLayoutPanel_1.RowCount = 1;
             this.tableLayoutPanel_1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_1.Size = new System.Drawing.Size(1930, 375);
+            this.tableLayoutPanel_1.Size = new System.Drawing.Size(1448, 305);
             this.tableLayoutPanel_1.TabIndex = 999;
             // 
             // tableLayoutPanel_2
@@ -311,24 +311,23 @@ namespace ReactiveFieldsUpdater
             this.tableLayoutPanel_2.ColumnCount = 1;
             this.tableLayoutPanel_2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel_2.Controls.Add(this.operationsBox, 0, 0);
-            this.tableLayoutPanel_2.Location = new System.Drawing.Point(0, 413);
+            this.tableLayoutPanel_2.Location = new System.Drawing.Point(0, 336);
+            this.tableLayoutPanel_2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel_2.Name = "tableLayoutPanel_2";
             this.tableLayoutPanel_2.RowCount = 1;
             this.tableLayoutPanel_2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel_2.Size = new System.Drawing.Size(1930, 534);
+            this.tableLayoutPanel_2.Size = new System.Drawing.Size(1448, 434);
             this.tableLayoutPanel_2.TabIndex = 999;
             // 
             // RFUPluginControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel_1);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.tableLayoutPanel_2);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.MinimumSize = new System.Drawing.Size(1930, 0);
             this.Name = "RFUPluginControl";
-            this.Size = new System.Drawing.Size(1930, 950);
+            this.Size = new System.Drawing.Size(1448, 772);
             this.Load += new System.EventHandler(this.MyPluginControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.attributesGridView)).EndInit();
             this.entitiesBox.ResumeLayout(false);
