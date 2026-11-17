@@ -20,6 +20,17 @@ You can check and uncheck the operations that you want to execute, and then just
 Image you got a set of 20 custom Entities and you need to increase every "Name" Max Length from 100 to 800:
 Reactive Fields Updater is a valid alternative to Power Apps when it comes to multiple or repetitive operations to be performed at once, since multi-entity operations are supported.
 
+### Features
+
+- Supported field types: Text, Multiline Text, Whole Number, Decimal, Floating Point and Currency.
+- Editable properties: `MaxLength`, `MinValue`, `MaxValue` (configurable in the settings file).
+- Filter boxes and sortable columns (click the header) for Entities and Fields.
+- The Attributes grid shows the current value and the new value; invalid values (wrong type, MaxLength out of range) are rejected while typing.
+- New operations are selected by default; press `Del` to remove the highlighted operations, `Ctrl+A` to select all of them.
+- Operations on the same field are sent in a single request; failed operations stay in the list with their error message (hover to read it), successful ones are removed.
+- Optional "Publish after update" toggle in the toolbar.
+- Changing connection resets the tool; closing it with pending operations asks for confirmation.
+
 ## Installation
 
 This tool can be downloaded from XrmToolbox Tool Library. You can connect to your Organization, then you're ready to go.

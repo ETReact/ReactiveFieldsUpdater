@@ -221,6 +221,7 @@
       <DependentUpon>RFUPluginControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\ListViewColumnSorter.cs" />
     <Compile Include="Utility\RFUHelper.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>

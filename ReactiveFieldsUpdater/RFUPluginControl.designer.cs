@@ -51,6 +51,10 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonUpdate = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel_1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel_2 = new System.Windows.Forms.TableLayoutPanel();
+            this.txtFilterEntities = new System.Windows.Forms.TextBox();
+            this.txtFilterFields = new System.Windows.Forms.TextBox();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonPublish = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.attributesGridView)).BeginInit();
             this.entitiesBox.SuspendLayout();
             this.fieldsBox.SuspendLayout();
@@ -75,17 +79,20 @@ namespace ReactiveFieldsUpdater
             this.attributesGridView.RowTemplate.Height = 24;
             this.attributesGridView.Size = new System.Drawing.Size(466, 267);
             this.attributesGridView.TabIndex = 6;
-            this.attributesGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.SetNewOperation);
+            this.attributesGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.attributesGridView_CellValueChanged);
+            this.attributesGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.attributesGridView_CellValidating);
+            this.attributesGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.attributesGridView_CellEndEdit);
             // 
             // entitiesListView
             // 
             this.entitiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.entitiesListView.HideSelection = false;
-            this.entitiesListView.Location = new System.Drawing.Point(10, 23);
+            this.entitiesListView.Location = new System.Drawing.Point(10, 44);
             this.entitiesListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.entitiesListView.MultiSelect = false;
             this.entitiesListView.Name = "entitiesListView";
-            this.entitiesListView.Size = new System.Drawing.Size(465, 268);
+            this.entitiesListView.Size = new System.Drawing.Size(465, 247);
             this.entitiesListView.TabIndex = 2;
             this.entitiesListView.UseCompatibleStateImageBehavior = false;
             this.entitiesListView.SelectedIndexChanged += new System.EventHandler(this.entitiesListView_SelectedIndexChanged);
@@ -95,10 +102,11 @@ namespace ReactiveFieldsUpdater
             this.fieldsListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fieldsListView.HideSelection = false;
-            this.fieldsListView.Location = new System.Drawing.Point(4, 23);
+            this.fieldsListView.Location = new System.Drawing.Point(4, 44);
             this.fieldsListView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.fieldsListView.MultiSelect = false;
             this.fieldsListView.Name = "fieldsListView";
-            this.fieldsListView.Size = new System.Drawing.Size(470, 268);
+            this.fieldsListView.Size = new System.Drawing.Size(470, 247);
             this.fieldsListView.TabIndex = 4;
             this.fieldsListView.UseCompatibleStateImageBehavior = false;
             this.fieldsListView.SelectedIndexChanged += new System.EventHandler(this.fieldsListView_SelectedIndexChanged);
@@ -142,11 +150,33 @@ namespace ReactiveFieldsUpdater
             this.operationsListView.TabIndex = 12;
             this.operationsListView.UseCompatibleStateImageBehavior = false;
             this.operationsListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.operationsListView_ItemChecked);
-            // 
+            this.operationsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.operationsListView_KeyDown);
+            //
+            // txtFilterEntities
+            //
+            this.txtFilterEntities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFilterEntities.Location = new System.Drawing.Point(10, 20);
+            this.txtFilterEntities.Name = "txtFilterEntities";
+            this.txtFilterEntities.Size = new System.Drawing.Size(465, 20);
+            this.txtFilterEntities.TabIndex = 1;
+            this.txtFilterEntities.TextChanged += new System.EventHandler(this.txtFilterEntities_TextChanged);
+            //
+            // txtFilterFields
+            //
+            this.txtFilterFields.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFilterFields.Location = new System.Drawing.Point(4, 20);
+            this.txtFilterFields.Name = "txtFilterFields";
+            this.txtFilterFields.Size = new System.Drawing.Size(470, 20);
+            this.txtFilterFields.TabIndex = 3;
+            this.txtFilterFields.TextChanged += new System.EventHandler(this.txtFilterFields_TextChanged);
+            //
             // entitiesBox
-            // 
+            //
             this.entitiesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.entitiesBox.Controls.Add(this.txtFilterEntities);
             this.entitiesBox.Controls.Add(this.entitiesListView);
             this.entitiesBox.Location = new System.Drawing.Point(2, 2);
             this.entitiesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -161,6 +191,7 @@ namespace ReactiveFieldsUpdater
             // 
             this.fieldsBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.fieldsBox.Controls.Add(this.txtFilterFields);
             this.fieldsBox.Controls.Add(this.fieldsListView);
             this.fieldsBox.Location = new System.Drawing.Point(484, 2);
             this.fieldsBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
@@ -222,7 +253,7 @@ namespace ReactiveFieldsUpdater
             this.lnkSelectAll.Size = new System.Drawing.Size(48, 13);
             this.lnkSelectAll.TabIndex = 8;
             this.lnkSelectAll.TabStop = true;
-            this.lnkSelectAll.Text = "SelectAll";
+            this.lnkSelectAll.Text = "Select All";
             this.lnkSelectAll.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSelectAll_LinkClicked);
             // 
             // toolStrip
@@ -233,7 +264,9 @@ namespace ReactiveFieldsUpdater
             this.toolStripSeparator,
             this.toolStripButtonLoad,
             this.toolStripButtonClear,
-            this.toolStripButtonUpdate});
+            this.toolStripButtonUpdate,
+            this.toolStripSeparator2,
+            this.toolStripButtonPublish});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(1448, 27);
@@ -283,9 +316,24 @@ namespace ReactiveFieldsUpdater
             this.toolStripButtonUpdate.Size = new System.Drawing.Size(72, 24);
             this.toolStripButtonUpdate.Text = "Update!";
             this.toolStripButtonUpdate.Click += new System.EventHandler(this.toolStripButtonUpdate_Click);
-            // 
+            //
+            // toolStripSeparator2
+            //
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            //
+            // toolStripButtonPublish
+            //
+            this.toolStripButtonPublish.CheckOnClick = true;
+            this.toolStripButtonPublish.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonPublish.Name = "toolStripButtonPublish";
+            this.toolStripButtonPublish.Size = new System.Drawing.Size(120, 24);
+            this.toolStripButtonPublish.Text = "Publish after update";
+            this.toolStripButtonPublish.ToolTipText = "When checked, the updated entities are published after the operations are applied";
+            this.toolStripButtonPublish.CheckedChanged += new System.EventHandler(this.toolStripButtonPublish_CheckedChanged);
+            //
             // tableLayoutPanel_1
-            // 
+            //
             this.tableLayoutPanel_1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel_1.ColumnCount = 3;
@@ -331,7 +379,9 @@ namespace ReactiveFieldsUpdater
             this.Load += new System.EventHandler(this.MyPluginControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.attributesGridView)).EndInit();
             this.entitiesBox.ResumeLayout(false);
+            this.entitiesBox.PerformLayout();
             this.fieldsBox.ResumeLayout(false);
+            this.fieldsBox.PerformLayout();
             this.attributesBox.ResumeLayout(false);
             this.operationsBox.ResumeLayout(false);
             this.operationsBox.PerformLayout();
@@ -365,5 +415,9 @@ namespace ReactiveFieldsUpdater
         private LinkLabel lnkSelectAll;
         private TableLayoutPanel tableLayoutPanel_1;
         private TableLayoutPanel tableLayoutPanel_2;
+        private TextBox txtFilterEntities;
+        private TextBox txtFilterFields;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton toolStripButtonPublish;
     }
 }
