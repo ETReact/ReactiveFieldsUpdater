@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  NuGet package for the XrmToolBox Tool Library.
+
+  Build:
+    1. Build the solution in Release (MSBuild ReactiveFieldsUpdater.sln -p:Configuration=Release)
+    2. dotnet pack nuget\Pack.csproj        (output in nupkg\)
+
+  Keep <version> equal to AssemblyVersion in Properties\AssemblyInfo.cs, otherwise XrmToolBox
+  always shows the tool as "update available".
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>ReactiveFieldsUpdater</id>
+    <version>1.2.0</version>
+    <title>Reactive Fields Updater</title>
+    <authors>Emilio Torella</authors>
+    <owners>Emilio Torella</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+
+    <projectUrl>https://github.com/ETReact/ReactiveFieldsUpdater</projectUrl>
+    <repository type="git" url="https://github.com/ETReact/ReactiveFieldsUpdater" />
+
+    <!--
+      Icon: ONLY iconUrl, no embedded <icon> (the XrmToolBox Tool Library rejects the nuget.org .../icon endpoint).
+      pack shows warning NU5048 (iconUrl deprecated): expected.
+    -->
+    <iconUrl>https://i.postimg.cc/bwdrKGhq/Reactive-Fields-Updater-Icon.jpg</iconUrl>
+
+    <readme>docs\README.md</readme>
+
+    <summary>Update Power Apps fields in a smart and reactive way: change MaxLength, MinValue and MaxValue of many fields across many entities at once.</summary>
+    <description>Update Power Apps fields in a smart and reactive way.
+
+Reactive Fields Updater is an XrmToolBox tool to change field properties (MaxLength, MinValue, MaxValue) of Dataverse / Dynamics 365 entities in bulk:
+- Filter and sort entities and fields
+- Edit the new value next to the current one, with validation while typing
+- Collect the changes as a list of operations, across many fields and entities
+- Apply the selected operations in one go, optionally publishing the entities afterwards
+Supports Text, Multiline Text, Whole Number, Decimal, Floating Point and Currency fields.</description>
+    <releaseNotes>1.2.0
+- New: filter boxes and sortable columns for Entities and Fields.
+- New: Attributes grid with Current Value / New Value and input validation.
+- New: support for Multiline Text, Decimal, Floating Point and Currency fields.
+- New: "Publish after update" option, confirmation before updating and summary afterwards.
+- New: Del / Ctrl+A in the Operations list; new operations are checked by default.
+- New: entities loaded automatically; reset on connection change; confirmation when closing with pending operations.
+- Improved: metadata cache and a single request per field, with progress messages.
+- Fixed: error when clearing the Attributes grid; check state lost when adding operations; failed operations removed from the list; operations shared among tool instances; settings not saved.
+
+1.1.4
+- Introduced Responsive UI.</releaseNotes>
+    <copyright>Copyright © 2024-2026 Emilio Torella</copyright>
+    <language>en-US</language>
+    <tags>XrmToolBox Plugins ReactiveFieldsUpdater Reactive Fields Updater PowerApps Power Apps Dataverse Dynamics365 CRM Metadata MaxLength Bulk</tags>
+
+    <dependencies>
+      <!-- XrmToolBox expects a dependency on "XrmToolBox" with the minimum version targeted -->
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="XrmToolBox" version="1.2022.10.58" />
+      </group>
+    </dependencies>
+  </metadata>
+
+  <files>
+    <!-- XrmToolBox loads tools from the Plugins subfolder; the tool is a single DLL with no extra dependencies -->
+    <file src="ReactiveFieldsUpdater\bin\Release\ReactiveFieldsUpdater.dll" target="lib\net462\Plugins" />
+    <file src="README.md" target="docs\" />
+  </files>
+</package>
